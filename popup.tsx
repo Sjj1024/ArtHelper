@@ -1,52 +1,162 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import './assets/index.scss'
 import { Select } from 'antd'
-import { Checkbox, Divider } from 'antd'
+import { Storage } from '@plasmohq/storage'
+import { Checkbox } from 'antd'
 import type { CheckboxProps, GetProp } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { hasCookie } from './utils/cookie'
+import { sendToBackground } from '@plasmohq/messaging'
 
 function IndexPopup() {
-    const [data, setData] = useState('')
-
+    const storage = new Storage()
+    // 主发文平台
+    const [main, setMain] = useState('')
+    // 同步平台的名称列表
     const CheckboxGroup = Checkbox.Group
 
-    const plainOptions = [
-        'CSDN',
-        '掘金',
-        '博客园',
-        '今日头条',
-        '公众号',
-        '知乎',
-        '简书',
-        '思否',
+    // 可选平台列表：value是编辑文章的网站地址，cooid：用户登录后的校验id，edit：用户编辑文章的地址，login：用户登录地址，
+    const platList = [
+        {
+            label: 'CSDN',
+            value: 'https://mp.csdn.net',
+            cookid: 'UserToken',
+            edit: 'https://mp.csdn.net/mp_blog/creation/editor',
+            login: 'https://passport.csdn.net/login?code=applets',
+            desc: 'China (中国)',
+        },
+        {
+            label: '掘金',
+            value: 'https://juejin.cn',
+            cookid: 'sid_ucp_v1',
+            edit: 'https://juejin.cn/editor/drafts/new',
+            login: 'https://juejin.cn/login',
+            desc: 'USA (美国)',
+        },
+        {
+            label: '博客园',
+            value: 'https://i.cnblogs.com',
+            cookid: '.CNBlogsCookie',
+            edit: 'https://mp.csdn.net/mp_blog/creation/editor',
+            login: 'https://passport.csdn.net/login?code=applets',
+            desc: 'Japan (日本)',
+        },
+        {
+            label: '知乎',
+            value: 'https://www.zhihu.com',
+            cookid: 'SESSIONID',
+            edit: 'https://mp.csdn.net/mp_blog/creation/editor',
+            login: 'https://passport.csdn.net/login?code=applets',
+            desc: 'Korea (韩国)',
+        },
     ]
-    const defaultCheckedList = ['CSDN']
+    const [platOptions, setPlatOptions] = useState(platList)
 
-    const handleChange = (value: string) => {
+    // const platOptions = [
+    //     'CSDN',
+    //     '掘金',
+    //     '博客园',
+    //     '今日头条',
+    //     '公众号',
+    //     '知乎',
+    //     '简书',
+    //     '思否',
+    // ]
+    // const defaultCheckedList = ['https://juejin.cn/editor/drafts/new?v=2']
+
+    // 可以选中还是打开登录页
+    const handleCheck = async (domain: string) => {
+        const curPlat = platOptions.find((item) => item.value === domain)
+        const isLogin = await hasCookie(curPlat.value, curPlat.cookid)
+        console.log('是否登录', isLogin)
+        if (isLogin) {
+            return true
+        } else {
+            // 打开掘金的登录页面
+            chrome.tabs.create({
+                url: curPlat.login,
+            })
+            return false
+        }
+    }
+
+    const handleChange = async (value: string) => {
         console.log(`selected ${value}`)
+        // 判断主平台是否登录，登录后才可以选择，没有登陆跳转到登录页
+        if (handleCheck(value)) {
+            setMain(value)
+            storage.set('main', value)
+        }
     }
 
-    const [checkedList, setCheckedList] = useState<any[]>(defaultCheckedList)
+    const [checkedList, setCheckedList] = useState<any[]>([])
 
-    const checkAll = plainOptions.length === checkedList.length
+    const checkAll = platOptions.length === checkedList.length
     const indeterminate =
-        checkedList.length > 0 && checkedList.length < plainOptions.length
+        checkedList.length > 0 && checkedList.length < platOptions.length
 
-    const onChange = (list: any[]) => {
-        setCheckedList(list)
+    const onChange = async (list: any[]) => {
+        console.log('items are ', list)
+        let enableItem = []
+        list.forEach(async (item) => {
+            handleCheck(item) && enableItem.push(item)
+        })
+        setCheckedList(enableItem)
+        await storage.set('platforms', enableItem)
+        // asyncPlat()
     }
 
-    const onCheckAllChange: CheckboxProps['onChange'] = (e) => {
-        setCheckedList(e.target.checked ? plainOptions : [])
+    const onCheckAllChange: CheckboxProps['onChange'] = async (e) => {
+        console.log('check all', e.target.checked)
+        setCheckedList(
+            e.target.checked ? platOptions.map((item) => item.value) : []
+        )
+        if (e.target.checked) {
+            await storage.set('platforms', platOptions)
+        }
+        asyncPlat()
     }
 
-    //  创建缩小版窗口
+    //  创建缩小版窗口:根据选中的同步平台变化来定
     const creatWindow = () => {
-        chrome.windows.create({
-            url: 'https://juejin.cn/',
-            state: 'minimized',
+        // chrome.windows.create({
+        //     url: 'https://juejin.cn/',
+        //     state: 'minimized',
+        // })
+        // 获取网站cookie
+        const configCookie = { url: 'https://juejin.cn/' }
+        chrome.cookies.getAll(configCookie).then((cookies) => {
+            console.log('获取到掘金的cookie', cookies)
         })
     }
+
+    // 通知：同步列表变化
+    const asyncPlat = async () => {
+        const resp = await sendToBackground({
+            name: 'ping',
+            body: {
+                id: 123,
+            },
+        })
+        console.log(resp)
+    }
+
+    // 改变同步平台列表
+    const changePlat = async () => {
+        const getMain = await storage.get('main')
+        console.log('getMain is ', getMain)
+        if (getMain) {
+            setMain(getMain)
+            const plats = platList.filter((item) => item.value !== getMain)
+            setPlatOptions(plats)
+            console.log('main and plats is ', getMain, platOptions)
+        }
+    }
+
+    useEffect(() => {
+        console.log('主操作平台变化')
+        changePlat()
+    }, [main])
 
     return (
         <div className="popBox">
@@ -55,14 +165,10 @@ function IndexPopup() {
                 <div>
                     <span className="mainLabel">主操作平台：</span>
                     <Select
-                        defaultValue="csdn"
+                        value={main}
                         style={{ width: 120 }}
                         onChange={handleChange}
-                        options={[
-                            { value: 'csdn', label: 'CSDN' },
-                            { value: 'juejin', label: '掘金' },
-                            { value: 'bokeyuan', label: '博客园' },
-                        ]}
+                        options={platOptions}
                     />
                 </div>
                 <QuestionCircleOutlined
@@ -81,7 +187,7 @@ function IndexPopup() {
                     同步平台控制
                 </Checkbox>
                 <CheckboxGroup
-                    options={plainOptions}
+                    options={platOptions}
                     value={checkedList}
                     onChange={onChange}
                 />

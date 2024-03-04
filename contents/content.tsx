@@ -1,9 +1,18 @@
-import type { PlasmoCSConfig } from 'plasmo'
+// import type { PlasmoCSConfig } from 'plasmo'
 
-export {}
+// // 可以匹配多个网址
+// export const config: PlasmoCSConfig = {
+//     matches: [
+//         'https://www.csdn.net/*',
+//         'https://blog.csdn.net/*',
+//         'https://mp.csdn.net/*',
+//         'https://juejin.cn/*',
+//         'https://www.cnblogs.com/*',
+//     ],
+// }
 
-const CustomButton = () => {
-  return <button>Custom button</button>
-}
+// const CustomButton = () => {
+//     return <button>Custom UI</button>
+// }
 
-export default CustomButton
+// export default CustomButton
