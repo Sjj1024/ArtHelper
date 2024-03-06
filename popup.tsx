@@ -9,6 +9,7 @@ import { hasCookie } from './utils/cookie'
 import { sendToBackground } from '@plasmohq/messaging'
 
 function IndexPopup() {
+    // 本地存储
     const storage = new Storage()
     // 主发文平台
     const [main, setMain] = useState('')
@@ -37,19 +38,21 @@ function IndexPopup() {
             label: '博客园',
             value: 'https://i.cnblogs.com',
             cookid: '.CNBlogsCookie',
-            edit: 'https://mp.csdn.net/mp_blog/creation/editor',
-            login: 'https://passport.csdn.net/login?code=applets',
+            edit: 'https://i.cnblogs.com/posts/edit',
+            login: 'https://account.cnblogs.com/signin',
             desc: 'Japan (日本)',
         },
         {
             label: '知乎',
-            value: 'https://www.zhihu.com',
-            cookid: 'SESSIONID',
-            edit: 'https://mp.csdn.net/mp_blog/creation/editor',
-            login: 'https://passport.csdn.net/login?code=applets',
+            value: 'https://zhihu.com',
+            cookid: 'z_c0',
+            edit: 'https://zhuanlan.zhihu.com/write',
+            login: 'https://www.zhihu.com/signin',
             desc: 'Korea (韩国)',
         },
     ]
+
+    // 可同步平台列表
     const [platOptions, setPlatOptions] = useState(platList)
 
     // const platOptions = [
@@ -80,6 +83,7 @@ function IndexPopup() {
         }
     }
 
+    // 主操作平台改变
     const handleChange = async (value: string) => {
         console.log(`selected ${value}`)
         // 判断主平台是否登录，登录后才可以选择，没有登陆跳转到登录页
@@ -89,44 +93,58 @@ function IndexPopup() {
         }
     }
 
+    // 同步平台列表
     const [checkedList, setCheckedList] = useState<any[]>([])
 
     const checkAll = platOptions.length === checkedList.length
     const indeterminate =
         checkedList.length > 0 && checkedList.length < platOptions.length
 
+    // 同步平台选择变化
     const onChange = async (list: any[]) => {
         console.log('items are ', list)
         let enableItem = []
-        list.forEach(async (item) => {
-            handleCheck(item) && enableItem.push(item)
+        let fnPromise = list.map((item) => {
+            return handleCheck(item)
         })
-        setCheckedList(enableItem)
-        await storage.set('platforms', enableItem)
+        Promise.all(fnPromise).then((res) => {
+            console.log('判断结果是', res)
+            res.forEach((item, index) => {
+                item && enableItem.push(list[index])
+            })
+            setCheckedList(enableItem)
+            console.log('存储的platforms:', enableItem)
+            storage.set('platforms', enableItem)
+        })
+
         // asyncPlat()
     }
 
+    // 选择了所有的同步平台
     const onCheckAllChange: CheckboxProps['onChange'] = async (e) => {
         console.log('check all', e.target.checked)
-        setCheckedList(
-            e.target.checked ? platOptions.map((item) => item.value) : []
-        )
+        let enableItem = []
         if (e.target.checked) {
-            await storage.set('platforms', platOptions)
+            platOptions.forEach(async (item) => {
+                if (await handleCheck(item.value)) {
+                    enableItem.push(item)
+                }
+            })
+            setCheckedList(enableItem)
+            await storage.set('platforms', enableItem)
+        } else {
+            setCheckedList([])
         }
-        asyncPlat()
+        // asyncPlat()
     }
 
     //  创建缩小版窗口:根据选中的同步平台变化来定
     const creatWindow = () => {
-        // chrome.windows.create({
-        //     url: 'https://juejin.cn/',
-        //     state: 'minimized',
+        // chrome.tabs.query({ windowType: 'normal' }, (tabs) => {
+        //     console.log('查询到的窗口是', tabs)
         // })
-        // 获取网站cookie
-        const configCookie = { url: 'https://juejin.cn/' }
-        chrome.cookies.getAll(configCookie).then((cookies) => {
-            console.log('获取到掘金的cookie', cookies)
+        chrome.cookies.getAll({ url: 'https://www.zhihu.com' }, (cookie) => {
+            console.log('检测到cookie值', cookie)
         })
     }
 
@@ -151,7 +169,17 @@ function IndexPopup() {
             setPlatOptions(plats)
             console.log('main and plats is ', getMain, platOptions)
         }
+        // 同步已经选择的平台
+        const getPlat: string[] = await storage.get('platforms')
+        console.log('获取到默认选择同步平台是', getPlat)
+        if (getPlat.length > 0) {
+            setCheckedList(getPlat)
+        }
     }
+
+    // useEffect(() => {
+    //     changePlat()
+    // }, [])
 
     useEffect(() => {
         console.log('主操作平台变化')
@@ -168,7 +196,7 @@ function IndexPopup() {
                         value={main}
                         style={{ width: 120 }}
                         onChange={handleChange}
-                        options={platOptions}
+                        options={platList}
                     />
                 </div>
                 <QuestionCircleOutlined
@@ -178,14 +206,15 @@ function IndexPopup() {
             </div>
             {/* 同步平台控制 */}
             <div className="asyncBox">
-                <Checkbox
+                {/* <Checkbox
                     indeterminate={indeterminate}
                     onChange={onCheckAllChange}
                     checked={checkAll}
                     className="checkAll"
                 >
                     同步平台控制
-                </Checkbox>
+                </Checkbox> */}
+                <span className="checkAll">同步平台选择</span>
                 <CheckboxGroup
                     options={platOptions}
                     value={checkedList}

@@ -34,7 +34,8 @@
             "<all_urls>"
         ],
         "permissions": [
-            "cookies"
+            "cookies",
+            "webRequest"
         ]
     }
 }

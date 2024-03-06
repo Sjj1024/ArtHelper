@@ -10,11 +10,11 @@ export const config: PlasmoCSConfig = {
     ],
 }
 
+var curUrl = window.location.href
 // 监听dom变化
 const listenDom = () => {
     //选择一个需要观察的节点
     var targetNode = document.body
-    var curUrl = window.location.href
     // 设置observer的配置选项
     var configMutation = { attributes: true, childList: true, subtree: true }
     // 当节点发生变化时的需要执行的函数
@@ -54,14 +54,13 @@ const listenDom = () => {
     //使用配置文件对目标节点进行观测
     observer.observe(targetNode, configMutation)
 }
-listenDom()
 // 停止观测
 // observer.disconnect()
 
 // 监听所有页面加载完成
 window.onload = () => {
-    const curUrl = window.location.href
     console.log('监听所有页面资源加载完成的脚本', curUrl)
+    listenDom()
     //   listenCsdnTitle(curUrl)
 }
 
@@ -90,7 +89,7 @@ const listenCsdnTitle = (url: String) => {
         // console.log('文章标题dom', titleInput)
         if (titleInput && addEnable) {
             addEnable = false
-            titleInput.addEventListener('change', (e: any) => {
+            titleInput.addEventListener('input', (e: any) => {
                 console.log('文章标题发生变化:', e.target.value)
             })
         }
@@ -102,9 +101,9 @@ let textEnable = true
 const listenCsdnContent = (url: String) => {
     if (url.includes('csdn') && url.includes('editor')) {
         const textInput: any = document.querySelector('.cke_wysiwyg_frame')
-        const iframeDom = textInput.contentWindow.document
-        const iframeBody = iframeDom.querySelector('body')
-        console.log('iframe元素', iframeBody.innerHTML)
+        const iframeDom = textInput?.contentWindow.document
+        const iframeBody = iframeDom?.querySelector('body')
+        console.log('iframe元素', iframeBody?.innerHTML)
     }
 }
 
