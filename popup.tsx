@@ -10,7 +10,9 @@ import { sendToBackground } from '@plasmohq/messaging'
 
 function IndexPopup() {
     // 本地存储
-    const storage = new Storage()
+    const storage = new Storage({
+        area: 'local',
+    })
     // 主发文平台
     const [main, setMain] = useState('')
     // 同步平台的名称列表
@@ -143,9 +145,11 @@ function IndexPopup() {
         // chrome.tabs.query({ windowType: 'normal' }, (tabs) => {
         //     console.log('查询到的窗口是', tabs)
         // })
-        chrome.cookies.getAll({ url: 'https://www.zhihu.com' }, (cookie) => {
-            console.log('检测到cookie值', cookie)
-        })
+        // chrome.cookies.getAll({ url: 'https://www.zhihu.com' }, (cookie) => {
+        //     console.log('检测到cookie值', cookie)
+        // })
+        chrome.tabs.create({ url: './tabs/first.html' })
+        // asyncPlat()
     }
 
     // 通知：同步列表变化
@@ -172,7 +176,7 @@ function IndexPopup() {
         // 同步已经选择的平台
         const getPlat: string[] = await storage.get('platforms')
         console.log('获取到默认选择同步平台是', getPlat)
-        if (getPlat.length > 0) {
+        if (getPlat && getPlat.length > 0) {
             setCheckedList(getPlat)
         }
     }

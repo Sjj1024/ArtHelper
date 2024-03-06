@@ -1,0 +1,14 @@
+.titleBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .label {
+        margin-right: 10px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+}
