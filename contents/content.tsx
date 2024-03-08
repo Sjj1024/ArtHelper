@@ -12,7 +12,7 @@ export const config: PlasmoCSConfig = {
 }
 
 const CustomButton = () => {
-    return <button>Custom UI</button>
+    return <button>1</button>
 }
 
 export default CustomButton

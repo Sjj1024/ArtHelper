@@ -3,7 +3,7 @@ import './assets/index.scss'
 import { Select } from 'antd'
 import { Storage } from '@plasmohq/storage'
 import { Checkbox } from 'antd'
-import type { CheckboxProps, GetProp } from 'antd'
+import type { CheckboxProps } from 'antd'
 import { useEffect, useState } from 'react'
 import { hasCookie } from './utils/cookie'
 import { sendToBackground } from '@plasmohq/messaging'
@@ -12,6 +12,7 @@ function IndexPopup() {
     // 本地存储
     const storage = new Storage({
         area: 'local',
+        copiedKeyList: ['shield-modulation'],
     })
     // 主发文平台
     const [main, setMain] = useState('')

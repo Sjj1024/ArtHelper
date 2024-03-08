@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Storage } from '@plasmohq/storage'
 import './index.scss'
+import { ArrowRightOutlined } from '@ant-design/icons'
 import { Collapse, Button } from 'antd'
 
 // 初始化仓库存储
 const storage = new Storage({
     area: 'local',
+    copiedKeyList: ['shield-modulation'],
 })
+
+chrome.storage.local.set({ 'shield-modulation': '11111111111' })
 
 // 显示已经发过的文章缓存
 function DeltaFlyerPage() {
@@ -14,16 +18,45 @@ function DeltaFlyerPage() {
 
     const [items, setItems]: any = useState([])
 
+    const genExtra = (item: any) => (
+        <div className="syncBox">
+            <div
+                className="syncItem"
+                onClick={async (event) => {
+                    // If you don't want click extra trigger collapse, you can prevent this:
+                    event.stopPropagation()
+                    console.log('点击了一篇文章:', item)
+                    await storage.setItem('one', item)
+                    creatJuejin('https://juejin.cn/editor/drafts/new')
+                }}
+            >
+                <ArrowRightOutlined />
+                <span>掘金</span>
+            </div>
+            <div className="syncItem">
+                <ArrowRightOutlined
+                    onClick={(event) => {
+                        // If you don't want click extra trigger collapse, you can prevent this:
+                        event.stopPropagation()
+                        console.log('点击了一篇文章:', item)
+                    }}
+                />
+                <span>博客园</span>
+            </div>
+        </div>
+    )
+
     // 初始化页面数据
     const initData = async () => {
         const articles: [] = await storage.getItem('articles')
-        console.log('加载缓存的文章:', articles)
+        console.log('加载缓存的文章:', storage, articles)
         if (articles && articles.length > 0) {
             const artList = articles.map((item: any, index) => {
                 return {
                     key: index,
                     label: item.title,
                     children: <p>{item.content}</p>,
+                    extra: genExtra(item),
                 }
             })
             setItems(artList)
@@ -47,10 +80,10 @@ function DeltaFlyerPage() {
     }
 
     // 创建掘金tab
-    const creatJuejin = () => {
+    const creatJuejin = (url?: string) => {
         chrome.windows.create(
             {
-                url: 'https://juejin.cn/editor/drafts/new',
+                url: url,
                 type: 'normal',
                 state: 'minimized',
             },
@@ -71,9 +104,9 @@ function DeltaFlyerPage() {
                 <Button type="primary" className="btn" onClick={clearData}>
                     清空数据
                 </Button>
-                <Button type="primary" className="btn" onClick={creatJuejin}>
+                {/* <Button type="primary" className="btn">
                     打开掘金
-                </Button>
+                </Button> */}
                 <Button type="primary" className="btn" onClick={clearData}>
                     给掘金发消息
                 </Button>
