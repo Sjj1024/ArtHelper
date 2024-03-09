@@ -6,6 +6,7 @@
   "author": "1024shen",
   "scripts": {
     "dev": "plasmo dev",
+    "debug": "plasmo dev --verbose",
     "build": "plasmo build",
     "package": "plasmo package"
   },
