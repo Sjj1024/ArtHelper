@@ -35,7 +35,9 @@
     ],
     "permissions": [
       "cookies",
-      "webRequest"
+      "webRequest",
+      "storage",
+      "scripting"
     ]
   }
 }
