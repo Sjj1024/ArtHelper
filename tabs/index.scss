@@ -1,0 +1,27 @@
+.titleBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+
+    .label {
+        margin-right: 10px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+}
+
+.syncBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    .syncItem {
+        margin-right: 10px;
+        border: 1px solid #4e8be6;
+        border-radius: 3px;
+        // padding: 2px 10px;
+    }
+}

@@ -1,0 +1,44 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.popBox {
+    padding: 10px 6px;
+    width: 280px;
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    .mainEdit {
+        width: 240px;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        .helps {
+            font-size: 18px;
+            margin: 0 2px;
+            &:hover {
+                color: #1a7aff;
+            }
+        }
+    }
+
+    .asyncBox {
+        width: 260px;
+        padding: 10px 15px;
+        .checkAll {
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+.mainLabel {
+    font-size: 15px;
+}
