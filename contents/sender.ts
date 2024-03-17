@@ -10,8 +10,12 @@ export const config: PlasmoCSConfig = {
 
 // 接收发送文章的消息：模拟手动发文章操作
 var curUrl = window.location.href
+// article title
+let title = null
 // 当前要发送的文章
-let sendArt = null
+let sendArt: string | null = null
+// all csdn image url
+let csdnImg = null
 // 是不是已经在md编辑模式了，是的话，就不要监听dom变化了
 let editModul = null
 
@@ -35,12 +39,13 @@ const listenDom = () => {
                     titleDiv &&
                     contentDiv
                 ) {
-                    console.log(
-                        'sender listen 元素节点变化',
-                        titleDiv,
-                        contentDiv
-                    )
-                    juejin(titleDiv.innerText, contentDiv.innerText)
+                    console.log('sender listen 元素节点变化')
+                    title = titleDiv.innerText
+                    sendArt = contentDiv.innerText
+                    // 找到所有的图片链接
+                    findImg(sendArt)
+                    // 给编辑器赋值
+                    juejin(title, sendArt)
                 } else {
                     // console.log('sender listen 样式属性变化')
                 }
@@ -55,8 +60,47 @@ const listenDom = () => {
 
 window.onload = () => {
     listenDom()
-    // 模拟两秒发送一次
-    // setInterval(urlSave, 3000)
+    // listen url change get true url
+    listenUrl()
+}
+
+// find all img url
+const findImg = (content: string) => {
+    console.log('findimg content is', content)
+    const reImg = new RegExp(/<img.*?src="(.*?)"/g)
+    var imgTags = content.match(reImg)
+    console.log('re content img tag are', imgTags)
+    if (imgTags) {
+        let urls = imgTags.map((url) => {
+            return url.match(/\ssrc=['"](.*?)['"]/)[1]
+        })
+        console.log('all image url is', urls)
+        // 等监听到url变为文章的url后，将所有的url替换为掘金的图片地址
+        csdnImg = urls
+    }
+}
+
+// 监听url变化了
+const listenUrl = () => {
+    // https://juejin.cn/editor/drafts/7347165355586125861
+    let timer = setInterval(() => {
+        // re end num
+        const url = window.location.href
+        if (url.length > 40 && csdnImg) {
+            console.log('has listen true url is', url)
+            timer && clearInterval(timer)
+            // replace all csdn image url
+            let taskPromise = csdnImg.map((url) => {
+                return urlSave(url)
+            })
+            Promise.all(taskPromise).then((res) => {
+                console.log('all image replace task done', res)
+                console.log('send article content is', sendArt)
+                // reset title and content
+                juejin(title, sendArt)
+            })
+        }
+    }, 500)
 }
 
 // 模拟掘金发文章操作
@@ -86,9 +130,9 @@ const juejin = (title, content) => {
 }
 
 // 发送替换图片url的请求
-const urlSave = () => {
+const urlSave = (url) => {
     // 可以使用fetch替换csdn的文章里面图片链接
-    fetch('https://juejin.cn/image/urlSave', {
+    return fetch('https://juejin.cn/image/urlSave', {
         headers: {
             accept: '*/*',
             'accept-language': 'zh-CN,zh;q=0.9',
@@ -101,11 +145,17 @@ const urlSave = () => {
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin',
         },
-        referrer: 'https://juejin.cn/editor/drafts/7344970197130428455',
+        referrer: window.location.href,
         referrerPolicy: 'strict-origin-when-cross-origin',
-        body: '{"url":"https://img-blog.csdnimg.cn/direct/9943cd2cdf394f5c94502b194d00f250.png"}',
+        body: `{"url":"${url}"}`,
         method: 'POST',
         mode: 'cors',
         credentials: 'include',
+    }).then(async (res) => {
+        let data = await res.json()
+        console.log('replace response json is', data)
+        // 如果成功，就替换文章里面的链接
+        sendArt = sendArt.replaceAll(url, data.data)
+        // console.log('send article content is', sendArt)
     })
 }

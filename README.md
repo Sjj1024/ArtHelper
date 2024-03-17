@@ -10,3 +10,4 @@
 -   支持文章缓存
 -   支持屏蔽csdn等平台广告
 -   支持自定义同步规则
+-   auto replace image url 
