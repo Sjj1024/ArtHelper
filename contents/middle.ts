@@ -36,17 +36,16 @@ const innsetHtml = async () => {
         console.log('articles one is ：', one, articles)
         const titleDiv = document.createElement('div')
         titleDiv.id = 'titleDiv'
+        titleDiv.style.display = 'none'
         titleDiv.innerText = one.title
         document.body.appendChild(titleDiv)
         const contentDiv = document.createElement('div')
         contentDiv.id = 'contentDiv'
+        contentDiv.style.display = 'none'
         contentDiv.innerText = one.content
         document.body.appendChild(contentDiv)
-        // sendArt = one ? one : articles.length > 0 ? [articles.length - 1] : ''
     }
 }
 
-window.onload = () => {
-    console.log('middle on load')
-    innsetHtml()
-}
+console.log('middle on load')
+innsetHtml()

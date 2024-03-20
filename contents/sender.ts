@@ -58,12 +58,6 @@ const listenDom = () => {
     observer.observe(targetNode, configMutation)
 }
 
-window.onload = () => {
-    listenDom()
-    // listen url change get true url
-    listenUrl()
-}
-
 // find all img url
 const findImg = (content: string) => {
     console.log('findimg content is', content)
@@ -99,7 +93,7 @@ const listenUrl = () => {
                 // reset title and content
                 juejin(title, sendArt)
                 // update content
-                updateArt(tid, title, sendArt)
+                // updateArt(tid, title, sendArt)
             })
         }
     }, 500)
@@ -117,13 +111,11 @@ const juejin = (title, content) => {
         titleInput.value = title
         // call change and blur
         // titleInput.change()
-        var event = new Event('input', { bubbles: true });
-        titleInput.dispatchEvent(event);
-        var changeEvent = new Event('change', { bubbles: true });
-        titleInput.dispatchEvent(changeEvent);
-        titleInput.blur()
-        // contnetDiv.focus()
-        // contnetDiv.innerHTML = '我是文章内容'
+        var event = new Event('input', { bubbles: true })
+        titleInput.dispatchEvent(event)
+        // var changeEvent = new Event('change', { bubbles: true });
+        // titleInput.dispatchEvent(changeEvent);
+        // titleInput.blur()
         try {
             contnetDiv.CodeMirror.setValue(content)
             editModul = true
@@ -170,45 +162,7 @@ const urlSave = (url) => {
     })
 }
 
-// update article
-const updateArt = (tid, title, content) => {
-    fetch(
-        'https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=7345439647391155738',
-        {
-            headers: {
-                accept: '*/*',
-                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
-                'content-type': 'application/json',
-                'sec-ch-ua':
-                    '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
-                'sec-ch-ua-mobile': '?0',
-                'sec-ch-ua-platform': '"macOS"',
-                'sec-fetch-dest': 'empty',
-                'sec-fetch-mode': 'cors',
-                'sec-fetch-site': 'same-site',
-                'x-secsdk-csrf-token':
-                    '0001000000013d417cec54570efcc8613bf06e35112cd4fbe3f27d6a614c47a06c486e9f257d17bdda559566319b',
-            },
-            referrer: 'https://juejin.cn/editor/drafts/' + tid,
-            referrerPolicy: 'strict-origin-when-cross-origin',
-            body: JSON.stringify({
-                id: tid,
-                category_id: '0',
-                tag_ids: [],
-                link_url: '',
-                cover_image: '',
-                title: title,
-                brief_content: '',
-                edit_type: 10,
-                html_content: 'deprecated',
-                mark_content: content,
-                theme_ids: [],
-            }),
-            method: 'POST',
-            mode: 'cors',
-            credentials: 'include',
-        }
-    ).then((res) => {
-        console.log('update article is', res.json())
-    })
-}
+// juejin listen dom and set title and content
+listenDom()
+// listen url change get true url
+listenUrl()

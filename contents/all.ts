@@ -11,14 +11,16 @@ export const config: PlasmoCSConfig = {
 }
 
 var curUrl = window.location.href
+
 // 监听dom变化
 const listenDom = () => {
+    console.log('all content listen dom remove ad')
     //选择一个需要观察的节点
     var targetNode = document.body
     // 设置observer的配置选项
     var configMutation = { attributes: true, childList: true, subtree: true }
     // 当节点发生变化时的需要执行的函数
-    var callback = function (mutationsList, observer) {
+    var callback = (mutationsList, observer) => {
         // const curUrl = window.location.href
         // console.log('监听所有页面资源加载完成的脚本', curUrl)
         listenCsdnTitle(curUrl)
@@ -27,22 +29,27 @@ const listenDom = () => {
         for (var mutation of mutationsList) {
             // 如果type是childList说明是元素添加或者删除了
             if (mutation.type == 'childList') {
-                // console.log('移除垃圾弹窗广告.', document.querySelector('.tip-box'))
-                if (document.getElementById('nps-box')) {
-                    document.getElementById('nps-box').style.display = 'none'
+                //  remove csdn ad
+                if (curUrl.includes('mp.csdn.net/mp_blog/manage/article')) {
+                    // console.log('移除垃圾弹窗广告.', document.querySelector('.tip-box'))
+                    if (document.getElementById('nps-box')) {
+                        document.getElementById('nps-box').style.display =
+                            'none'
+                    }
+                    if (document.querySelector('.tip-box')) {
+                        const parent =
+                            document.querySelector('.tip-box').parentElement
+                        parent.removeChild(parent.lastElementChild)
+                    }
+                    if (document.querySelector('.traffic-show-box')) {
+                        ;(
+                            document.querySelector(
+                                '.traffic-show-box'
+                            ) as HTMLElement
+                        ).style.display = 'none'
+                    }
                 }
-                if (document.querySelector('.tip-box')) {
-                    const parent =
-                        document.querySelector('.tip-box').parentElement
-                    parent.removeChild(parent.lastElementChild)
-                }
-                if (document.querySelector('.traffic-show-box')) {
-                    ;(
-                        document.querySelector(
-                            '.traffic-show-box'
-                        ) as HTMLElement
-                    ).style.display = 'none'
-                }
+
                 // document.getElementById('nps-box').style.display = 'none'
             } else if (mutation.type == 'attributes') {
                 // console.log('样式发生了变化', mutation)
@@ -58,11 +65,7 @@ const listenDom = () => {
 // observer.disconnect()
 
 // 监听所有页面加载完成
-window.onload = () => {
-    console.log('监听所有页面资源加载完成的脚本', curUrl)
-    listenDom()
-    //   listenCsdnTitle(curUrl)
-}
+listenDom()
 
 // 测试点击事件有多少个
 var isChangeEventBound = true // 初始化标志变量
@@ -103,7 +106,7 @@ const listenCsdnContent = (url: String) => {
         const textInput: any = document.querySelector('.cke_wysiwyg_frame')
         const iframeDom = textInput?.contentWindow.document
         const iframeBody = iframeDom?.querySelector('body')
-        console.log('iframe元素', iframeBody?.innerHTML)
+        // console.log('iframe元素', iframeBody?.innerHTML)
     }
 }
 
