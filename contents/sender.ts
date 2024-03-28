@@ -60,7 +60,7 @@ const listenDom = () => {
 
 // find all img url
 const findImg = (content: string) => {
-    console.log('findimg content is', content)
+    // console.log('findimg content is', content)
     const reImg = new RegExp(/<img.*?src="(.*?)"/g)
     var imgTags = content.match(reImg)
     console.log('re content img tag are', imgTags)
@@ -92,11 +92,20 @@ const listenUrl = () => {
                 console.log('send article content is', tid)
                 // reset title and content
                 juejin(title, sendArt)
-                // update content
-                // updateArt(tid, title, sendArt)
+                // click publish btn
+                handlePub()
             })
         }
     }, 500)
+}
+
+// handle publish action
+const handlePub = () => {
+    // find publish btn
+    const pubBtn: HTMLButtonElement = document.querySelector(
+        'div.publish-popup > button'
+    )
+    pubBtn && pubBtn.click()
 }
 
 // 模拟掘金发文章操作
@@ -161,6 +170,9 @@ const urlSave = (url) => {
         // console.log('send article content is', sendArt)
     })
 }
+
+// send background message
+
 
 // juejin listen dom and set title and content
 listenDom()

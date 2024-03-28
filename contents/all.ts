@@ -53,6 +53,9 @@ const listenDom = () => {
                 // document.getElementById('nps-box').style.display = 'none'
             } else if (mutation.type == 'attributes') {
                 // console.log('样式发生了变化', mutation)
+                if (document.getElementById('nps-box')) {
+                    document.getElementById('nps-box').style.display = 'none'
+                }
             }
         }
     }

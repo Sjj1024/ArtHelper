@@ -11,8 +11,39 @@ const storage = new Storage({
 
 // 发送文章平台请求地址
 const sendUrls = [
-    'https://bizapi.csdn.net/blog/phoenix/console/v1/article/get-quality-score',
+    'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
 ]
+
+// csdn：status = 0
+// {
+//   "article_id": "137015832",
+//   "title": "阿里云OSS连接工具",
+//   "description": "",
+//   "content": "---",
+//   "markdowncontent": "",
+//   "tags": "阿里云,云计算",
+//   "categories": "",
+//   "type": "original",
+//   "status": 0,
+//   "read_type": "public",
+//   "reason": "",
+//   "resource_url": "",
+//   "resource_id": "",
+//   "original_link": "",
+//   "authorized_status": false,
+//   "check_original": false,
+//   "editor_type": 0,
+//   "plan": [],
+//   "vote_id": 0,
+//   "scheduled_time": 0,
+//   "level": "1",
+//   "cover_type": 1,
+//   "cover_images": [
+//       "https://img-blog.csdnimg.cn/direct/16a524894695417eaa2617eedb117faa.png"
+//   ],
+//   "not_auto_saved": 1,
+//   "is_new": 1
+// }
 
 // 拦截请求处理函数
 const filterHandler = (details: any) => {
@@ -26,7 +57,14 @@ const filterHandler = (details: any) => {
             )
             const postData = JSON.parse(postedString)
             console.log('请求体内容', postData)
-            csdnPostArticle(postData)
+            // if csdn status is 0 then get title and content
+            if (postData.status === 0) {
+                const articlePost = {
+                    title: postData.title,
+                    content: postData.content,
+                }
+                csdnPostArticle(articlePost)
+            }
         } catch (error) {
             console.log('解析请求体出错', error)
         }
