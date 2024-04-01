@@ -45,8 +45,6 @@ listenDom()
 const csdnHandle = () => {
     // clear ad
     csdnClearAd()
-    // csdn footer add juejin category
-    csdnFooter()
 }
 
 // csdn ad clear
@@ -63,21 +61,6 @@ const csdnClearAd = () => {
         ;(
             document.querySelector('.traffic-show-box') as HTMLElement
         ).style.display = 'none'
-    }
-}
-
-// csdn footer add juejin info
-const csdnFooter = () => {
-    // add category
-    const footer = document.querySelector('#moreDiv')
-    const catggory = document.querySelector('#juejinCategory')
-    if (footer && !catggory) {
-        // catrgory
-        const divCategory = document.createElement('div')
-        divCategory.id = 'juejinCategory'
-        const labelCategory = `<div data-v-00bc4474="" class="el-form-item mt8 is-no-asterisk"><label class="el-form-item__label" style="width: 90px;"><span data-v-00bc4474="" class="el-tooltip" aria-describedby="el-tooltip-4452" tabindex="0"> 掘金分类 </span></label><div class="el-form-item__content" style="margin-left: 90px;"><label data-v-00bc4474="" role="radio" aria-checked="true" tabindex="0" class="el-radio originalRadio is-checked"><span class="el-radio__input is-checked"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" tabindex="-1" autocomplete="off" class="el-radio__original" value="original"></span><span class="el-radio__label"><span data-v-00bc4474="" class="el-tooltip item" aria-describedby="el-tooltip-3256" tabindex="0">原创<i data-v-00bc4474="" class="tortImg"></i></span><!----></span></label><label data-v-00bc4474="" role="radio" tabindex="0" class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" tabindex="-1" autocomplete="off" class="el-radio__original" value="repost"></span><span class="el-radio__label"><span data-v-00bc4474="" class="el-tooltip item" aria-describedby="el-tooltip-6972" tabindex="0">转载</span><!----></span></label><label data-v-00bc4474="" role="radio" tabindex="0" class="el-radio"><span class="el-radio__input"><span class="el-radio__inner"></span><input type="radio" aria-hidden="true" tabindex="-1" autocomplete="off" class="el-radio__original" value="translated"></span><span class="el-radio__label"><span data-v-00bc4474="" class="el-tooltip item" aria-describedby="el-tooltip-8430" tabindex="0">翻译</span><!----></span></label><!----></div></div>`
-        divCategory.innerHTML = labelCategory
-        footer.appendChild(divCategory)
     }
 }
 

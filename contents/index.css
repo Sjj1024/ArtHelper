@@ -1,7 +1,22 @@
-.customUi {
-    color: white;
+.juejinBox {
+    font-size: 14px;
+    display: flex;
+    flex-direction: row;
 }
 
-.csui {
-    color: black;
+#plasmo-shadow-container {
+    z-index: 1 !important;
+}
+
+.selectBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 0;
+}
+
+.category {
+    /* width: 10px; */
+    margin-left: 10px;
 }
