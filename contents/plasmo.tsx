@@ -3,6 +3,7 @@ import cssText from 'data-text:~/contents/index.css'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'
+import { useEffect } from 'react'
 
 export const config: PlasmoCSConfig = {
     matches: ['https://mp.csdn.net/*'],
@@ -31,18 +32,33 @@ const PlasmoInline = () => {
     // category change
     const cateChange = (value: any) => {
         console.log(`selected handle change`, value.target.value)
-        // storage.setItem("")
+        storage.setItem('juejinCate', value.target.value)
     }
 
     // tag change
     const tageChange = (value: any) => {
         console.log('tage selected change', value.target.value)
+        storage.setItem('juejinTag', [value.target.value])
     }
 
-    // column change
+    // column changejuejinColumn
     const columnChange = (value: any) => {
         console.log('column selected change', value.target.value)
+        storage.setItem('juejinColumn', [value.target.value])
     }
+
+    // init fun
+    const initValue = () => {
+        storage.setItem('juejinCate', juejinCategory[0].category_id)
+        storage.setItem('juejinTag', [juejinTags[0].tag_id])
+        storage.setItem('juejinColumn', [juejinColumns[0].column_id])
+    }
+
+    // init reset cate tag and column value
+    useEffect(() => {
+        initValue()
+    }, [])
+
     return (
         <div className="juejinBox">
             <span>

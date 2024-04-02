@@ -9,12 +9,23 @@ export const config: PlasmoCSConfig = {
 }
 
 // 接收发送文章的消息：模拟手动发文章操作
-var curUrl = window.location.href
+// article tid
+let tid = null
 // article title
 let title = null
 // 当前要发送的文章
 let sendArt: string | null = null
-// all csdn image url
+// description
+let desc: string = null
+// category id
+let category: string = null
+// tags id
+let tags: string[] = []
+// columns Column
+let columns: string[] = []
+// cover_image show image
+let cover_image: string = null
+// all csdn image url, use for replace juejin
 let csdnImg = null
 // 是不是已经在md编辑模式了，是的话，就不要监听dom变化了
 let editModul = null
@@ -30,18 +41,29 @@ const listenDom = () => {
         // 监听到文章内容后，就不再监听页面变化了
         if (editModul === null) {
             for (var mutation of mutationsList) {
-                // 检测并获取titleDiv和contentDiv
-                const titleDiv = document.getElementById('titleDiv')
-                const contentDiv = document.getElementById('contentDiv')
+                // 检测并获取article
+                const articleContent = document.getElementById('article')
+                // const contentDiv = document.getElementById('contentDiv')
                 if (
                     mutation.type == 'childList' &&
                     editModul === null &&
-                    titleDiv &&
-                    contentDiv
+                    articleContent
                 ) {
-                    console.log('sender listen 元素节点变化')
-                    title = titleDiv.innerText
-                    sendArt = contentDiv.innerText
+                    const article = JSON.parse(articleContent.innerText)
+                    console.log('sender listen 元素节点变化', article)
+                    title = article.title
+                    sendArt = article.content
+                    // cant more 100
+                    desc =
+                        article.description.length > 98
+                            ? article.description.slice(0, 90)
+                            : article.description
+                    // category
+                    category = article.cate
+                    // tags list
+                    tags = article.tags
+                    // columns
+                    columns = article.column
                     // 找到所有的图片链接
                     findImg(sendArt)
                     // 给编辑器赋值
@@ -77,6 +99,15 @@ const findImg = (content: string) => {
 // 监听url变化了
 const listenUrl = () => {
     // https://juejin.cn/editor/drafts/7347165355586125861
+    // const url = window.location.href
+    // const tid = url.split('/')[url.split('/').length - 1]
+    // title = '前端跨页面通信方案介绍'
+    // // desc length cant more 100
+    // const brief_content =
+    //     '在浏览器中，我们可以同时打开多个Tab页，每个Tab页可以粗略理解为一个“独立”的运行环境，即使是全局对象也不会在多个Tab间共享。然而有些时候，我们希望能在这些“独立”的Tab页面之间同步页面的数据、信息或状态。这就是本文说说的跨页面通信方案，那么目前有哪些跨页面的通信方案呢？本文重点介绍一下。同源页面之间跨页面通信一般有如下几种方案。'
+    // sendArt = ``
+    // console.log('send article tid is', tid, title, sendArt)
+    // updateArt(tid, title, sendArt, brief_content)
     let timer = setInterval(() => {
         // re end num
         const url = window.location.href
@@ -88,13 +119,23 @@ const listenUrl = () => {
                 return urlSave(url)
             })
             Promise.all(taskPromise).then((res) => {
-                const tid = url.split('/')[url.split('/').length - 1]
+                tid = url.split('/')[url.split('/').length - 1]
                 console.log('send article content is', tid)
                 // reset title and content
                 juejin(title, sendArt)
-                // click publish btn
-                handlePub()
+                // update article category and tags
+                setTimeout(() => {
+                    console.log('set timeout update art', desc, columns)
+                    updateArt(tid, title, sendArt)
+                }, 5000)
             })
+        }
+        // if csdnImg is null and panel display is none click publish
+        const panel: HTMLDivElement = document.querySelector(
+            'div.publish-popup > div'
+        )
+        if (!csdnImg && panel && panel.style.display === 'none') {
+            handlePub()
         }
     }, 500)
 }
@@ -167,13 +208,119 @@ const urlSave = (url) => {
         console.log('replace response json is', data)
         // 如果成功，就替换文章里面的链接
         sendArt = sendArt.replaceAll(url, data.data)
-        // console.log('send article content is', sendArt)
+        // if cover_image is null, set one
+        if (!cover_image) {
+            cover_image = data.data
+        }
     })
 }
 
-// send background message
+//send fetch update juejin article
+const updateArt = (id, title, content) => {
+    const link_url = ''
+    const is_gfw = 0
+    const is_english = 0
+    const is_original = 1
+    const edit_type = 10
+    const html_content = 'deprecated'
+    const mark_content = content
+    const theme_ids = []
+    const postJson = {
+        id,
+        category_id: category,
+        tag_ids: tags,
+        link_url,
+        cover_image,
+        is_gfw,
+        title,
+        brief_content: desc,
+        is_english,
+        is_original,
+        edit_type,
+        html_content,
+        mark_content,
+        theme_ids,
+        column_ids: ['7331070714765230106', '7348654457427689523'],
+    }
+    console.log('send fetch update art', postJson)
+    fetch(
+        'https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=7345439647391155738',
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                'sec-ch-ua':
+                    '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+            },
+            referrer: 'https://juejin.cn/',
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: JSON.stringify(postJson),
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+        }
+    )
+        .then(async (res) => {
+            let data = await res.json()
+            console.log('updateArt response json is', data)
+            // publish article to update columns and publish
+            updateColumn(tid)
+        })
+        .catch((err) => {
+            console.log('updateArt juejin article arr:', err)
+        })
+}
 
+// publish article to update columns
+const updateColumn = (id) => {
+    const postJson = {
+        draft_id: id,
+        sync_to_org: false,
+        column_ids: columns,
+        theme_ids: [],
+    }
+    console.log('update column post json', postJson)
+    fetch(
+        'https://api.juejin.cn/content_api/v1/article/publish?aid=2608&uuid=7345439647391155738',
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                'sec-ch-ua':
+                    '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+            },
+            referrer: 'https://juejin.cn/',
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: JSON.stringify(postJson),
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+        }
+    )
+        .then(async (res) => {
+            let data = await res.json()
+            console.log('update Column response json is', data)
+            // update juejin cookie juejinDone
+            document.cookie = `juejinDone=${tid}; path=/; domain=juejin.cn; secure`
+        })
+        .catch((err) => {
+            console.log('update Column article arr:', err)
+        })
+}
 
+console.log('sender------')
 // juejin listen dom and set title and content
 listenDom()
 // listen url change get true url

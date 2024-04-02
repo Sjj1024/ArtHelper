@@ -39,7 +39,7 @@ const listenDom = () => {
     var callback = function (mutationsList, observer) {
         // 监听到文章内容后，就不再监听页面变化了
         if (confirmPubBtn === null) {
-            // 检测并获取titleDiv和contentDiv
+            // 检测并获取article和contentDiv
             const publishDiv: HTMLDivElement = document.querySelector(
                 'div.publish-popup > div'
             )
@@ -48,7 +48,7 @@ const listenDom = () => {
                 console.log('middle listen 元素节点变化', publishDiv)
                 confirmPubBtn = publishDiv
                 // set windows fullwindows
-                showWin()
+                // showWin()
             }
         }
     }
@@ -75,16 +75,16 @@ const innsetHtml = async () => {
     if (editUrls.includes(curUrl)) {
         // 将文章追加到html中，间接给sender发文章数据
         console.log('articles one is ：', one, articles)
-        const titleDiv = document.createElement('div')
-        titleDiv.id = 'titleDiv'
-        titleDiv.style.display = 'none'
-        titleDiv.innerText = one.title
-        document.body.appendChild(titleDiv)
-        const contentDiv = document.createElement('div')
-        contentDiv.id = 'contentDiv'
-        contentDiv.style.display = 'none'
-        contentDiv.innerText = one.content
-        document.body.appendChild(contentDiv)
+        const article = document.createElement('div')
+        article.id = 'article'
+        article.style.display = 'none'
+        article.innerText = JSON.stringify(one)
+        document.body.appendChild(article)
+        // const contentDiv = document.createElement('div')
+        // contentDiv.id = 'contentDiv'
+        // contentDiv.style.display = 'none'
+        // contentDiv.innerText = one.content
+        // document.body.appendChild(contentDiv)
     }
 }
 

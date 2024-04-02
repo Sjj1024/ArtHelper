@@ -14,6 +14,49 @@ const sendUrls = [
     'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
 ]
 
+interface Article {
+    id: string
+    title: string
+    content: string
+    cate: string
+    tags: string[]
+    column: string[]
+}
+
+// handler csdn
+const csdnHandle = async (details: any) => {
+    try {
+        const decoder = new TextDecoder('utf-8')
+        const postedString = decoder.decode(
+            new Uint8Array(details?.requestBody?.raw[0].bytes)
+        )
+        const postData = JSON.parse(postedString)
+        console.log('请求体内容', postData)
+        // if csdn status is 0 then get title and content
+        if (postData.status === 0) {
+            // get juejin cate and tags ...
+            const juejinCate = await storage.getItem('juejinCate')
+            const juejinTag: string[] = await storage.getItem('juejinTag')
+            const juejinColumn: string[] = await storage.getItem('juejinColumn')
+            // del img height
+            const content = replaceImgHeight(postData.content)
+            const articlePost = {
+                id: postData.articleId as string,
+                title: postData.title as string,
+                content: content as string,
+                description: postData.description as string,
+                cate: juejinCate as string,
+                tags: juejinTag,
+                column: juejinColumn,
+            }
+            // save article to storage
+            addArticle(articlePost)
+        }
+    } catch (error) {
+        console.log('解析请求体出错', error)
+    }
+}
+
 // csdn：status = 0
 // {
 //   "article_id": "137015832",
@@ -47,39 +90,35 @@ const sendUrls = [
 
 // 拦截请求处理函数
 const filterHandler = (details: any) => {
+    console.log('art helper filter handler get')
     // csdn发送文章的逻辑
     if (details.method == 'POST' && sendUrls.includes(details.url)) {
         console.log('请求详情', details)
-        try {
-            const decoder = new TextDecoder('utf-8')
-            const postedString = decoder.decode(
-                new Uint8Array(details?.requestBody?.raw[0].bytes)
-            )
-            const postData = JSON.parse(postedString)
-            console.log('请求体内容', postData)
-            // if csdn status is 0 then get title and content
-            if (postData.status === 0) {
-                const articlePost = {
-                    title: postData.title,
-                    content: postData.content,
-                }
-                csdnPostArticle(articlePost)
-            }
-        } catch (error) {
-            console.log('解析请求体出错', error)
-        }
+        csdnHandle(details)
     }
+    // edit juejin update
+    // if (
+    //     details.method == 'POST' &&
+    //     details.url.includes('article_draft/update')
+    // ) {
+    //     const decoder = new TextDecoder('utf-8')
+    //     const postedString = decoder.decode(
+    //         new Uint8Array(details?.requestBody?.raw[0].bytes)
+    //     )
+    //     const postData = JSON.parse(postedString)
+    //     console.log('article_draft update 请求体内容', postData)
+    //     // 修改请求体
+    //     var modifiedData = JSON.stringify({
+    //         category_id: '6809637769959178254',
+    //         tag_ids: ['6809640408797167623', '6809640407484334093'],
+    //         ...postData,
+    //     })
+    //     return {
+    //         requestHeaders: details.requestHeaders,
+    //         requestBody: modifiedData,
+    //     }
+    // }
     return { cancel: false }
-}
-
-// csdn发文章逻辑
-const csdnPostArticle = async (details) => {
-    const id = details.articleId
-    const title = details.title
-    // replace all img height to none
-    const content = replaceImgHeight(details.content)
-    // console.log('开始发送文章', title, content)
-    addArticle(id, title, content)
 }
 
 // replace img height to none
@@ -101,22 +140,46 @@ const replaceImgHeight = (content) => {
 }
 
 // 存储发送的文章标题和内容:编辑的文章不会同步，如果文章标题相同，就视为发送过，不再同步
-const addArticle = async (id: string, title: string, content: string) => {
-    console.log('存储文章', title, content)
+const addArticle = async (articleObj: Article) => {
+    console.log('存储文章', articleObj)
     const articles: [] = await storage.get('articles')
+    // if article list exist and length eg 0
     if (articles && articles.length > 0) {
-        const findArt = articles.find((item: any) => item.title === title)
+        const findArt = articles.find(
+            (item: any) => item.title === articleObj.title
+        )
         console.log('找到文章findArt:', findArt)
+        // if dont find article, add list
         if (!findArt) {
-            storage.set('articles', [...articles, { id, title, content }])
+            storage.set('articles', [...articles, { ...articleObj }])
+        } else {
+            console.log('update article ')
         }
     } else {
         console.log('没有找到文章, 直接存储')
-        storage.set('articles', [{ id, title, content }])
+        storage.set('articles', [{ ...articleObj }])
     }
 }
 
-// 监听发送请求
+// listen juejin cookie change and control chrme windows query and close
+chrome.cookies.onChanged.addListener(async (changeInfo) => {
+    if (changeInfo.cookie.name === 'juejinDone') {
+        console.log('juejin cookie change', changeInfo)
+        // close juejin windows
+        try {
+            const juejinWinId: number = await storage.getItem('juejinWin')
+            console.log('juejin win id', juejinWinId)
+            juejinWinId &&
+                chrome.windows.remove(juejinWinId).then(() => {
+                    storage.removeItem('juejinWin')
+                })
+        } catch (error) {
+            console.log('close juejin win err', error)
+        }
+    }
+})
+
+// 监听发送请求：get csdn post and update juejin article
 chrome.webRequest.onBeforeRequest.addListener(
     filterHandler,
     { urls: ['<all_urls>'] },
