@@ -91,10 +91,6 @@ function DeltaFlyerPage() {
             (win) => {
                 console.log('windows创建成功', win)
                 storage.setItem('juejinWin', win.id)
-                // 5 second after close win
-                // setTimeout(() => {
-                //     chrome.windows.remove(win.id)
-                // }, 19000)
             }
         )
     }
