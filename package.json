@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "@ant-design/icons": "^5.3.1",
+        "@arco-design/web-react": "^2.61.2",
         "@plasmohq/messaging": "^0.6.2",
         "@plasmohq/storage": "^1.9.3",
         "antd": "^5.14.2",
