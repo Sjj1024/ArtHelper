@@ -196,7 +196,7 @@ function IndexPopup() {
             {/* 主工作平台 */}
             <div className="mainEdit">
                 <div>
-                    <span className="mainLabel">主操作平台：</span>
+                    <span className="mainLabel">主写作平台：</span>
                     <Select
                         value={main}
                         style={{ width: 120 }}

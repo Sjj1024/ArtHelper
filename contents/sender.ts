@@ -312,8 +312,20 @@ const updateColumn = (id) => {
         .then(async (res) => {
             let data = await res.json()
             console.log('update Column response json is', data)
-            // update juejin cookie juejinDone
-            document.cookie = `juejinDone=${tid}; path=/; domain=juejin.cn; secure`
+            // if data code !== 0 set message
+            /**
+             * {
+                  "err_no": 2,
+                  "err_msg": "摘要长度错误",
+                  "data": null
+              }
+             */
+            if (data.err_no !== 0) {
+                console.log('update Column err_msg is', data.err_msg)
+            } else {
+                // update juejin cookie juejinDone send message to close win
+                document.cookie = `juejinDone=${tid}; path=/; domain=juejin.cn; secure`
+            }
         })
         .catch((err) => {
             console.log('update Column article arr:', err)

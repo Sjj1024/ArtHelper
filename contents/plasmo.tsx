@@ -1,5 +1,5 @@
 import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from 'plasmo'
-import cssText from 'data-text:~/contents/index.css'
+import cssText from 'data-text:~/contents/index.scss'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'

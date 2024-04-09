@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Storage } from '@plasmohq/storage'
 import './index.scss'
+import someImage from 'data-base64:~assets/icon.png'
+import imgPath from 'url:~/assets/icon.png'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { Collapse, Button } from 'antd'
 
@@ -85,8 +87,8 @@ function DeltaFlyerPage() {
             {
                 url: url,
                 type: 'normal',
-                state: 'minimized',
-                // state: 'maximized',
+                // state: 'minimized',
+                state: 'maximized',
             },
             (win) => {
                 console.log('windows创建成功', win)
@@ -102,10 +104,67 @@ function DeltaFlyerPage() {
         })
     }
 
+    // change action icon
+    const setIcon = () => {
+        const canvas = new OffscreenCanvas(16, 16)
+        const context = canvas.getContext('2d')
+        context.clearRect(0, 0, 16, 16)
+        context.fillStyle = '#00FF00' // Green
+        context.fillRect(0, 0, 16, 16)
+        const imageData = context.getImageData(0, 0, 16, 16)
+        chrome.action.setIcon({ imageData: imageData }, () => {
+            console.log('set icon callback')
+        })
+    }
+
+    // set custom icon
+    const setPngIcon = () => {
+        var img = new Image()
+        img.onload = function () {
+            const canvas = new OffscreenCanvas(16, 16)
+            const context = canvas.getContext('2d')
+            context.drawImage(img, 0, 0, 16, 16)
+            const imageData = context.getImageData(0, 0, 16, 16)
+            chrome.action.setIcon({ imageData: imageData }, () => {
+                console.log('set icon callback')
+            })
+        }
+        img.src = someImage
+    }
+
+    // test set img path
+    const setPngPath = () => {
+        chrome.action.setIcon({ path: imgPath }, () => {
+            console.log('set icon callback')
+        })
+    }
+
+    // set badge action
+    const setBadge = () => {
+        chrome.action.setBadgeText({ text: '1' }, () => {
+            console.log('set badge text callback')
+        })
+        chrome.action.setBadgeBackgroundColor(
+            { color: '#00FF00' }, // Also green
+            () => {
+                console.log('set badge callback')
+            }
+        )
+    }
+
+    // setTitle
+    const setTitle = () => {
+        chrome.action.setTitle({ title: '自定义标题' }, () => {
+            console.log('set title callback')
+        })
+    }
+
     useEffect(() => {
         initData()
         // get juejin category data
         getJuejin()
+        // see image
+        console.log('imgPath-----', imgPath)
     }, [])
 
     return (
@@ -115,12 +174,28 @@ function DeltaFlyerPage() {
                 <Button type="primary" className="btn" onClick={clearData}>
                     清空数据
                 </Button>
+                <Button type="primary" className="btn" onClick={setIcon}>
+                    改变ICON
+                </Button>
+                <Button type="primary" className="btn" onClick={setPngIcon}>
+                    CanvasPNG
+                </Button>
+                <Button type="primary" className="btn" onClick={setPngPath}>
+                    设置源PNG
+                </Button>
+                <Button type="primary" className="btn" onClick={setTitle}>
+                    改变Title
+                </Button>
+                <Button type="primary" className="btn" onClick={setBadge}>
+                    SetBadge
+                </Button>
                 {/* <Button type="primary" className="btn">
                     打开掘金
                 </Button> */}
                 <Button type="primary" className="btn" onClick={clearData}>
                     给掘金发消息
                 </Button>
+                {/* <img src={someImage} alt="" /> */}
             </div>
             <Collapse accordion items={items} />
         </>
