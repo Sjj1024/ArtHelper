@@ -28,6 +28,7 @@ function DeltaFlyerPage() {
                     // If you don't want click extra trigger collapse, you can prevent this:
                     event.stopPropagation()
                     console.log('点击了一篇文章:', item)
+                    // save to local storage and creat juejin window
                     await storage.setItem('one', item)
                     creatJuejin('https://juejin.cn/editor/drafts/new')
                 }}
@@ -152,6 +153,19 @@ function DeltaFlyerPage() {
         )
     }
 
+    // set badge action
+    const setBadgeHide = () => {
+        chrome.action.setBadgeText({ text: '' }, () => {
+            console.log('set badge text callback')
+        })
+        chrome.action.setBadgeBackgroundColor(
+            { color: '#00FF00' }, // Also green
+            () => {
+                console.log('set badge callback')
+            }
+        )
+    }
+
     // setTitle
     const setTitle = () => {
         chrome.action.setTitle({ title: '自定义标题' }, () => {
@@ -188,6 +202,9 @@ function DeltaFlyerPage() {
                 </Button>
                 <Button type="primary" className="btn" onClick={setBadge}>
                     SetBadge
+                </Button>
+                <Button type="primary" className="btn" onClick={setBadgeHide}>
+                    HideBadge
                 </Button>
                 {/* <Button type="primary" className="btn">
                     打开掘金

@@ -1612,3 +1612,18 @@ export const juejinColumns = [
         column_id: '7277832524310118457',
     },
 ]
+
+// set extension icon
+
+// set badge action
+const setBadge = () => {
+    chrome.action.setBadgeText({ text: '1' }, () => {
+        console.log('set badge text callback')
+    })
+    chrome.action.setBadgeBackgroundColor(
+        { color: '#00FF00' }, // Also green
+        () => {
+            console.log('set badge callback')
+        }
+    )
+}

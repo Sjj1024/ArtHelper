@@ -9,7 +9,7 @@ const storage = new Storage({
     copiedKeyList: ['shield-modulation'],
 })
 
-// 发送文章平台请求地址
+// csdn发送文章平台请求地址
 const sendUrls = [
     'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
 ]
@@ -96,28 +96,10 @@ const filterHandler = (details: any) => {
         console.log('请求详情', details)
         csdnHandle(details)
     }
-    // edit juejin update
-    // if (
-    //     details.method == 'POST' &&
-    //     details.url.includes('article_draft/update')
-    // ) {
-    //     const decoder = new TextDecoder('utf-8')
-    //     const postedString = decoder.decode(
-    //         new Uint8Array(details?.requestBody?.raw[0].bytes)
-    //     )
-    //     const postData = JSON.parse(postedString)
-    //     console.log('article_draft update 请求体内容', postData)
-    //     // 修改请求体
-    //     var modifiedData = JSON.stringify({
-    //         category_id: '6809637769959178254',
-    //         tag_ids: ['6809640408797167623', '6809640407484334093'],
-    //         ...postData,
-    //     })
-    //     return {
-    //         requestHeaders: details.requestHeaders,
-    //         requestBody: modifiedData,
-    //     }
-    // }
+    // get juejin category list and tag list
+    if (details.method == 'GET' && details.url.includes('category')) {
+        console.log('请求详情', details)
+    }
     return { cancel: false }
 }
 
@@ -139,6 +121,22 @@ const replaceImgHeight = (content) => {
     return content
 }
 
+// 创建掘金tab
+const creatJuejin = (url?: string) => {
+    chrome.windows.create(
+        {
+            url: url,
+            type: 'normal',
+            state: 'minimized',
+            // state: 'maximized',
+        },
+        (win) => {
+            console.log('windows创建成功', win)
+            storage.setItem('juejinWin', win.id)
+        }
+    )
+}
+
 // 存储发送的文章标题和内容:编辑的文章不会同步，如果文章标题相同，就视为发送过，不再同步
 const addArticle = async (articleObj: Article) => {
     console.log('存储文章', articleObj)
@@ -152,6 +150,9 @@ const addArticle = async (articleObj: Article) => {
         // if dont find article, add list
         if (!findArt) {
             storage.set('articles', [...articles, { ...articleObj }])
+            // send juejin article
+            await storage.setItem('one', articleObj)
+            creatJuejin('https://juejin.cn/editor/drafts/new')
         } else {
             console.log('update article ')
         }
