@@ -1,4 +1,5 @@
 import { Storage } from '@plasmohq/storage'
+import { platList } from '../utils/common'
 export {}
 
 console.log('background----------')
@@ -121,6 +122,20 @@ const replaceImgHeight = (content) => {
     return content
 }
 
+// control platform publish article
+const winControl = async () => {
+    // get seleted async platform list
+    const platforms: [] = await storage.get('platforms')
+    console.log('platforms-----', platforms)
+    // for each platform to publish
+    platforms.forEach(async (item) => {
+        const plat = platList.find((p) => p.value === item)
+        console.log('plat-----', plat)
+        // creat juejin window to publish
+        creatJuejin(plat.edit)
+    })
+}
+
 // 创建掘金tab
 const creatJuejin = (url?: string) => {
     chrome.windows.create(
@@ -131,6 +146,7 @@ const creatJuejin = (url?: string) => {
             // state: 'maximized',
         },
         (win) => {
+            // TODO control window map platform, when published close current window
             console.log('windows创建成功', win)
             storage.setItem('juejinWin', win.id)
         }
@@ -139,9 +155,9 @@ const creatJuejin = (url?: string) => {
 
 // 存储发送的文章标题和内容:编辑的文章不会同步，如果文章标题相同，就视为发送过，不再同步
 const addArticle = async (articleObj: Article) => {
-    console.log('存储文章', articleObj)
+    console.log('background 存储文章', articleObj)
     const articles: [] = await storage.get('articles')
-    // if article list exist and length eg 0
+    // if article list exist and length eg 0 run save article
     if (articles && articles.length > 0) {
         const findArt = articles.find(
             (item: any) => item.title === articleObj.title
@@ -150,16 +166,18 @@ const addArticle = async (articleObj: Article) => {
         // if dont find article, add list
         if (!findArt) {
             storage.set('articles', [...articles, { ...articleObj }])
-            // send juejin article
-            await storage.setItem('one', articleObj)
-            creatJuejin('https://juejin.cn/editor/drafts/new')
         } else {
-            console.log('update article ')
+            console.log('background update article ')
         }
     } else {
-        console.log('没有找到文章, 直接存储')
+        console.log('background 没有找到文章, 直接存储')
         storage.set('articles', [{ ...articleObj }])
     }
+    // run publish flow
+    // send juejin article
+    await storage.setItem('one', articleObj)
+    // control win publisher
+    winControl()
 }
 
 // listen juejin cookie change and control chrme windows query and close

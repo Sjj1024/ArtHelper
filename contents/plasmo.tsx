@@ -3,7 +3,7 @@ import cssText from 'data-text:~/contents/index.scss'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'
-import { Select, Space } from 'antd'
+import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 
 export const config: PlasmoCSConfig = {

@@ -72,6 +72,7 @@ const innsetHtml = async () => {
     const articles: [] = await storage.getItem('articles')
     const one: any = await storage.getItem('one')
     console.log('articles one is ：', one, articles)
+    // check article is published
     if (editUrls.includes(curUrl)) {
         // 将文章追加到html中，间接给sender发文章数据
         console.log('articles one is ：', one, articles)

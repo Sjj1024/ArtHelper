@@ -10,6 +10,7 @@ export const config: PlasmoCSConfig = {
     ],
 }
 
+// current web url
 var curUrl = window.location.href
 
 // 监听dom变化

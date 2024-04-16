@@ -72,6 +72,12 @@ function DeltaFlyerPage() {
         setItems([])
     }
 
+    // get data from local storage
+    const getSyncs = async () => {
+        const platforms = await storage.get('platforms')
+        console.log('platforms-----', platforms)
+    }
+
     // 给掘金发消息
     const sendMessage = () => {
         console.log('给掘金发消息')
@@ -209,8 +215,8 @@ function DeltaFlyerPage() {
                 {/* <Button type="primary" className="btn">
                     打开掘金
                 </Button> */}
-                <Button type="primary" className="btn" onClick={clearData}>
-                    给掘金发消息
+                <Button type="primary" className="btn" onClick={getSyncs}>
+                    Get Syncs
                 </Button>
                 {/* <img src={someImage} alt="" /> */}
             </div>
