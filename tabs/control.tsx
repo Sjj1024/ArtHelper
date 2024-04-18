@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Storage } from '@plasmohq/storage'
 import './index.scss'
-import someImage from 'data-base64:~assets/icon.png'
 import imgPath from 'url:~/assets/icon.png'
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { Collapse, Button } from 'antd'
@@ -18,6 +17,8 @@ function DeltaFlyerPage() {
 
     const genExtra = (item: any) => (
         <div className="syncBox">
+            {/* category and tags */}
+
             <div
                 className="syncItem"
                 onClick={async (event) => {
@@ -64,7 +65,17 @@ function DeltaFlyerPage() {
                 return {
                     key: index,
                     label: item.title,
-                    children: <p>{item.content}</p>,
+                    children: (
+                        <div>
+                            <div>
+                                分类：{item.cate}&nbsp;&nbsp; 标签：
+                                {item.tags.map((tag: any) => tag + ',')}
+                                &nbsp;&nbsp; 专栏：
+                                {item.column.map((column: any) => column + ',')}
+                            </div>
+                            <p>内容：{item.content}</p>
+                        </div>
+                    ),
                     extra: genExtra(item),
                 }
             })
@@ -87,8 +98,9 @@ function DeltaFlyerPage() {
         const newArticles = articles.filter(
             (art: any) => art.title !== item.title
         )
-        setItems(newArticles)
+        console.log('new articles:', newArticles)
         await storage.setItem('articles', newArticles)
+        initData()
     }
 
     // 创建掘金tab

@@ -162,14 +162,17 @@ const winControl = async () => {
 }
 
 // 创建掘金tab
-const creatJuejin = (url?: string) => {
+const creatJuejin = async (url?: string) => {
     // show sync icon
     setBadge()
+    // show or hide auto ui action
+    const showUi = await storage.getItem('showUi')
+    // open juejin edit window
     chrome.windows.create(
         {
             url: url,
             type: 'normal',
-            state: 'minimized',
+            state: showUi ? 'maximized' : 'minimized',
             // state: 'maximized',
         },
         (win) => {

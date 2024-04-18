@@ -62,8 +62,17 @@ body {
 }
 
 .toolBox {
+    .toolRow {
+        margin-bottom: 10px;
+    }
     .btn {
         margin-right: 10px;
+    }
+
+    .toolItem {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 }
 

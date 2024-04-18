@@ -12,12 +12,8 @@ const storage = new Storage({
     // copiedKeyList: ['shield-modulation']
 })
 
-// chrome.storage.local.set({ 'shield-modulation': '11111111111' })
-
 // 显示已经发过的文章缓存
 function DeltaFlyerPage() {
-    const [text, setText] = useState('')
-
     const [items, setItems]: any = useState([])
 
     const genExtra = (item: any) => (
@@ -81,16 +77,6 @@ function DeltaFlyerPage() {
     const getOne = async () => {
         const one = await storage.get('one')
         console.log('one-----', one)
-    }
-
-    // 给掘金发消息
-    const sendMessage = () => {
-        console.log('给掘金发消息')
-        // chrome.tabs.sendMessage(
-        //   tabId: 12132,
-        //   message: "any",
-        //   callback: ()=>{},
-        // )
     }
 
     // 创建掘金tab
