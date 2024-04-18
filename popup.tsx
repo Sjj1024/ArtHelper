@@ -114,7 +114,9 @@ function IndexPopup() {
         // chrome.cookies.getAll({ url: 'https://www.zhihu.com' }, (cookie) => {
         //     console.log('检测到cookie值', cookie)
         // })
-        chrome.tabs.create({ url: './tabs/first.html' })
+        // chrome.tabs.create({ url: './tabs/first.html' })
+        chrome.tabs.create({ url: './tabs/layout.html' })
+        // window.open("https://blog.csdn.net/weixin_44786530/article/details/137814260?spm=1001.2014.3001.5501", "_blank");
         // asyncPlat()
     }
 

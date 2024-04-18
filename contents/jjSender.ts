@@ -53,7 +53,6 @@ const listenDom = () => {
                     console.log('sender listen 元素节点变化', article)
                     title = article.title
                     sendArt = article.content
-                    // cant more 100
                     desc =
                         article.description.length > 98
                             ? article.description.slice(0, 90)
@@ -130,23 +129,7 @@ const listenUrl = () => {
                 }, 5000)
             })
         }
-        // if csdnImg is null and panel display is none click publish
-        const panel: HTMLDivElement = document.querySelector(
-            'div.publish-popup > div'
-        )
-        if (!csdnImg && panel && panel.style.display === 'none') {
-            handlePub()
-        }
     }, 500)
-}
-
-// handle publish action
-const handlePub = () => {
-    // find publish btn
-    const pubBtn: HTMLButtonElement = document.querySelector(
-        'div.publish-popup > button'
-    )
-    pubBtn && pubBtn.click()
 }
 
 // 模拟掘金发文章操作
@@ -269,18 +252,112 @@ const updateArt = (id, title, content) => {
         .then(async (res) => {
             let data = await res.json()
             console.log('updateArt response json is', data)
-            // publish article to update columns and publish
-            updateColumn(tid)
+            // get article desc fetch
+            getArtDesc()
         })
         .catch((err) => {
             console.log('updateArt juejin article arr:', err)
         })
 }
 
-// publish article to update columns
-const updateColumn = (id) => {
+//send fetch update juejin article
+const updateArt2 = (id, title, content) => {
+    const link_url = ''
+    const is_gfw = 0
+    const is_english = 0
+    const is_original = 1
+    const edit_type = 10
+    const html_content = 'deprecated'
+    const mark_content = content
+    const theme_ids = []
     const postJson = {
-        draft_id: id,
+        id,
+        category_id: category,
+        tag_ids: tags,
+        link_url,
+        cover_image,
+        is_gfw,
+        title,
+        brief_content: desc,
+        is_english,
+        is_original,
+        edit_type,
+        html_content,
+        mark_content,
+        theme_ids,
+        column_ids: ['7331070714765230106', '7348654457427689523'],
+    }
+    console.log('send fetch update art', postJson)
+    fetch(
+        'https://api.juejin.cn/content_api/v1/article_draft/update?aid=2608&uuid=7345439647391155738',
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                'sec-ch-ua':
+                    '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+            },
+            referrer: 'https://juejin.cn/',
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: JSON.stringify(postJson),
+            method: 'POST',
+            mode: 'cors',
+            credentials: 'include',
+        }
+    )
+        .then(async (res) => {
+            let data = await res.json()
+            console.log('updateArt response json is', data)
+            updateColumn()
+        })
+        .catch((err) => {
+            console.log('updateArt juejin article arr:', err)
+        })
+}
+
+// get article desc fetch
+const getArtDesc = () => {
+    fetch(
+        `https://api.juejin.cn/content_api/v1/article_draft/abstract?draft_id=${tid}&aid=2608&uuid=7345439647391155738`,
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                'sec-ch-ua':
+                    '"Google Chrome";v="123", "Not:A-Brand";v="8", "Chromium";v="123"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+            },
+            referrer: `https://juejin.cn/editor/drafts/${tid}`,
+            referrerPolicy: 'strict-origin-when-cross-origin',
+            body: null,
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'include',
+        }
+    ).then(async (res) => {
+        let data = await res.json()
+        console.log('get article desc response json is', data)
+        desc = data.data.text
+        // then update article desc
+        updateArt2(tid, title, sendArt)
+    })
+}
+
+// publish article to update columns
+const updateColumn = () => {
+    const postJson = {
+        draft_id: tid,
         sync_to_org: false,
         column_ids: columns,
         theme_ids: [],
@@ -312,16 +389,9 @@ const updateColumn = (id) => {
         .then(async (res) => {
             let data = await res.json()
             console.log('update Column response json is', data)
-            // if data code !== 0 set message
-            /**
-             * {
-                  "err_no": 2,
-                  "err_msg": "摘要长度错误",
-                  "data": null
-              }
-             */
             if (data.err_no !== 0) {
                 console.log('update Column err_msg is', data.err_msg)
+                alert(`发布错误：${data.err_msg}`)
             } else {
                 // update juejin cookie juejinDone send message to close win
                 document.cookie = `juejinDone=${tid}; path=/; domain=juejin.cn; secure`

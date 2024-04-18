@@ -33,3 +33,4 @@ export const platList = [
         desc: 'Korea (韩国)',
     },
 ]
+

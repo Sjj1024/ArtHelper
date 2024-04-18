@@ -58,6 +58,31 @@ const csdnHandle = async (details: any) => {
     }
 }
 
+// set badge action
+const setBadge = () => {
+    chrome.action.setBadgeText({ text: '=>' }, () => {
+        console.log('set badge text callback')
+    })
+    // chrome.action.setBadgeBackgroundColor(
+    //     { color: '#00FF00' }, // Also green
+    //     () => {
+    //         console.log('set badge callback')
+    //     }
+    // )
+}
+
+const setBadgeHide = () => {
+    chrome.action.setBadgeText({ text: '' }, () => {
+        console.log('set badge text callback')
+    })
+    // chrome.action.setBadgeBackgroundColor(
+    //     { color: '#00FF00' }, // Also green
+    //     () => {
+    //         console.log('set badge callback')
+    //     }
+    // )
+}
+
 // csdn：status = 0
 // {
 //   "article_id": "137015832",
@@ -138,6 +163,8 @@ const winControl = async () => {
 
 // 创建掘金tab
 const creatJuejin = (url?: string) => {
+    // show sync icon
+    setBadge()
     chrome.windows.create(
         {
             url: url,
@@ -190,7 +217,12 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
             console.log('juejin win id', juejinWinId)
             juejinWinId &&
                 chrome.windows.remove(juejinWinId).then(() => {
+                    // close juejin edit window
                     storage.removeItem('juejinWin')
+                    // set badege hide
+                    setBadgeHide()
+                    // clear one article
+                    storage.removeItem('one')
                 })
         } catch (error) {
             console.log('close juejin win err', error)

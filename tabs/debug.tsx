@@ -78,6 +78,11 @@ function DeltaFlyerPage() {
         console.log('platforms-----', platforms)
     }
 
+    const getOne = async () => {
+        const one = await storage.get('one')
+        console.log('one-----', one)
+    }
+
     // 给掘金发消息
     const sendMessage = () => {
         console.log('给掘金发消息')
@@ -148,15 +153,15 @@ function DeltaFlyerPage() {
 
     // set badge action
     const setBadge = () => {
-        chrome.action.setBadgeText({ text: '1' }, () => {
+        chrome.action.setBadgeText({ text: '=>' }, () => {
             console.log('set badge text callback')
         })
-        chrome.action.setBadgeBackgroundColor(
-            { color: '#00FF00' }, // Also green
-            () => {
-                console.log('set badge callback')
-            }
-        )
+        // chrome.action.setBadgeBackgroundColor(
+        //     { color: '#00FF00' }, // Also green
+        //     () => {
+        //         console.log('set badge callback')
+        //     }
+        // )
     }
 
     // set badge action
@@ -164,12 +169,12 @@ function DeltaFlyerPage() {
         chrome.action.setBadgeText({ text: '' }, () => {
             console.log('set badge text callback')
         })
-        chrome.action.setBadgeBackgroundColor(
-            { color: '#00FF00' }, // Also green
-            () => {
-                console.log('set badge callback')
-            }
-        )
+        // chrome.action.setBadgeBackgroundColor(
+        //     { color: '#00FF00' }, // Also green
+        //     () => {
+        //         console.log('set badge callback')
+        //     }
+        // )
     }
 
     // setTitle
@@ -190,7 +195,7 @@ function DeltaFlyerPage() {
     return (
         <>
             <div className="titleBox">
-                <h2 className="label">缓存的文章列表</h2>
+                <h2 className="label">DEBUG</h2>
                 <Button type="primary" className="btn" onClick={clearData}>
                     清空数据
                 </Button>
@@ -217,6 +222,9 @@ function DeltaFlyerPage() {
                 </Button> */}
                 <Button type="primary" className="btn" onClick={getSyncs}>
                     Get Syncs
+                </Button>
+                <Button type="primary" className="btn" onClick={getOne}>
+                    GetOne
                 </Button>
                 {/* <img src={someImage} alt="" /> */}
             </div>
