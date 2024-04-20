@@ -10,7 +10,7 @@ const storage = new Storage({
     copiedKeyList: ['shield-modulation'],
 })
 
-// csdn发送文章平台请求地址
+// csdn发送文章平台请求地址, 也是background脚本检测文章发布的请求地址
 const sendUrls = [
     'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
 ]
@@ -236,6 +236,8 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
 // 监听发送请求：get csdn post and update juejin article
 chrome.webRequest.onBeforeRequest.addListener(
     filterHandler,
-    { urls: ['<all_urls>'] },
+    {
+        urls: sendUrls,
+    },
     ['requestBody']
 )

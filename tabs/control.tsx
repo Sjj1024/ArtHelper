@@ -80,13 +80,15 @@ function DeltaFlyerPage() {
                 }
             })
             setItems(artList)
+        } else {
+            setItems([])
         }
     }
 
     // open help document
     const openDoc = async () => {
         window.open(
-            'https://blog.csdn.net/weixin_44786530/article/details/137814260?spm=1001.2014.3001.5501',
+            'https://xiaoshen.blog.csdn.net/article/details/137928542',
             '_blank'
         )
     }

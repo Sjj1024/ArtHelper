@@ -50,6 +50,22 @@ body {
     }
 }
 
+.bugBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding-bottom: 10px;
+
+    .label {
+        margin-right: 10px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+}
+
 .helperBox {
     margin-top: 10px;
     .desc {

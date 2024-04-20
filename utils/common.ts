@@ -18,7 +18,7 @@ export const platList = [
     },
     {
         label: '博客园',
-        value: 'https://i.cnblogs.com',
+        value: 'https://www.cnblogs.com/',
         cookid: '.CNBlogsCookie',
         edit: 'https://i.cnblogs.com/posts/edit',
         login: 'https://account.cnblogs.com/signin',
@@ -26,11 +26,10 @@ export const platList = [
     },
     {
         label: '知乎',
-        value: 'https://zhihu.com',
+        value: 'https://www.zhihu.com',
         cookid: 'z_c0',
         edit: 'https://zhuanlan.zhihu.com/write',
         login: 'https://www.zhihu.com/signin',
         desc: 'Korea (韩国)',
     },
 ]
-

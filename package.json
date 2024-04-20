@@ -1,9 +1,9 @@
 {
     "name": "art-helper",
-    "displayName": "Art helper",
+    "displayName": "写作助手",
     "version": "0.0.1",
-    "description": "article helper",
-    "author": "1024shen",
+    "description": "文章写作助手，帮助你快速实现文章同步功能，可以同步到多个平台，节省你的时间。",
+    "author": "1024xiaoshen",
     "scripts": {
         "dev": "plasmo dev",
         "build": "plasmo build",
@@ -31,8 +31,12 @@
     },
     "manifest": {
         "host_permissions": [
-            "https://*/*",
-            "<all_urls>"
+            "*://*.csdn.net/",
+            "https://www.csdn.net/",
+            "https://juejin.cn/",
+            "https://www.cnblogs.com/",
+            "https://www.bilibili.com/",
+            "https://www.zhihu.com/"
         ],
         "permissions": [
             "cookies",

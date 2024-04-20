@@ -43,7 +43,7 @@ function IndexPopup() {
         if (isLogin) {
             return true
         } else {
-            // 打开掘金的登录页面
+            // 打开平台的登录页面
             chrome.tabs.create({
                 url: curPlat.login,
             })

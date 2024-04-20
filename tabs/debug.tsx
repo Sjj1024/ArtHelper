@@ -68,6 +68,12 @@ function DeltaFlyerPage() {
         setItems([])
     }
 
+    // get sync platform list
+    const getSyncPlatforms = async () => {
+        const platforms = await storage.get('platforms')
+        console.log('platforms-----', platforms)
+    }
+
     // get data from local storage
     const getSyncs = async () => {
         const platforms = await storage.get('platforms')
@@ -182,8 +188,14 @@ function DeltaFlyerPage() {
         <>
             <div className="titleBox">
                 <h2 className="label">DEBUG</h2>
+                {/* <img src={someImage} alt="" /> */}
+            </div>
+            <div className="bugBox">
                 <Button type="primary" className="btn" onClick={clearData}>
                     清空数据
+                </Button>
+                <Button type="primary" className="btn" onClick={getSyncPlatforms}>
+                    选中平台
                 </Button>
                 <Button type="primary" className="btn" onClick={setIcon}>
                     改变ICON
@@ -203,16 +215,12 @@ function DeltaFlyerPage() {
                 <Button type="primary" className="btn" onClick={setBadgeHide}>
                     HideBadge
                 </Button>
-                {/* <Button type="primary" className="btn">
-                    打开掘金
-                </Button> */}
                 <Button type="primary" className="btn" onClick={getSyncs}>
                     Get Syncs
                 </Button>
                 <Button type="primary" className="btn" onClick={getOne}>
                     GetOne
                 </Button>
-                {/* <img src={someImage} alt="" /> */}
             </div>
             <Collapse accordion items={items} />
         </>
