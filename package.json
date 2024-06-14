@@ -10,6 +10,7 @@
         "package": "plasmo package"
     },
     "dependencies": {
+        "@ant-design/cssinjs": "^1.20.0",
         "@ant-design/icons": "^5.3.1",
         "@arco-design/web-react": "^2.61.2",
         "@plasmohq/messaging": "^0.6.2",

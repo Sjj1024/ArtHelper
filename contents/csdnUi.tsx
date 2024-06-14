@@ -1,9 +1,15 @@
-import type { PlasmoCSConfig, PlasmoGetInlineAnchor } from 'plasmo'
+import type {
+    PlasmoCSConfig,
+    PlasmoGetInlineAnchor,
+    PlasmoGetShadowHostId,
+} from 'plasmo'
 import cssText from 'data-text:~/contents/index.scss'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'
-import { Select } from 'antd'
+import { Select, Button } from 'antd'
+import { StyleProvider } from '@ant-design/cssinjs'
+import antdResetCssText from 'data-text:antd/dist/reset.css'
 import { useEffect, useState } from 'react'
 
 export const config: PlasmoCSConfig = {
@@ -18,16 +24,20 @@ const storage = new Storage({
 // load style file
 export const getStyle = () => {
     const style = document.createElement('style')
-    style.textContent = cssText
+    style.textContent = antdResetCssText + cssText
     return style
 }
+
+const HOST_ID = 'engage-csui'
+
+export const getShadowHostId: PlasmoGetShadowHostId = () => HOST_ID
 
 // insert into page dom
 export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
     document.querySelector(`#moreDiv > div:nth-child(9)`)
 
 // Use this to optimize unmount lookups
-export const getShadowHostId = () => 'plasmo-inline-example-unique-id'
+// export const getShadowHostId = () => 'plasmo-inline-example-unique-id'
 
 const PlasmoInline = () => {
     // category change
@@ -124,17 +134,23 @@ const PlasmoInline = () => {
                 <QuestionCircleOutlined />
             </span>
             {/* seleted  juejin category and tages and store*/}
+
             <div className="selectBox">
                 <div className="category">
                     <label htmlFor="cate" className="cate">
                         分类:
                     </label>
-                    <Select
-                        defaultValue={juejinCategory[0].category_id}
-                        style={{ width: 110 }}
-                        onChange={cateChange}
-                        options={cates}
-                    />
+                    <StyleProvider
+                        container={document.getElementById(HOST_ID).shadowRoot}
+                    >
+                        <Select
+                            defaultValue={juejinCategory[0].category_id}
+                            style={{ width: 110 }}
+                            size="small"
+                            onChange={cateChange}
+                            options={cates}
+                        />
+                    </StyleProvider>
                 </div>
                 <div className="category">
                     <label htmlFor="cate" className="cate">
@@ -145,6 +161,7 @@ const PlasmoInline = () => {
                         className="tagBox"
                         mode="multiple"
                         maxCount={3}
+                        size="small"
                         style={{ width: 240 }}
                         onChange={tageChange}
                         options={tags}
@@ -157,8 +174,9 @@ const PlasmoInline = () => {
                     <Select
                         mode="multiple"
                         maxCount={3}
+                        size="small"
                         defaultValue={[juejinColumns[0].column_id]}
-                        style={{ width: 120 }}
+                        style={{ width: 124 }}
                         onChange={columnChange}
                         options={cols}
                     />
