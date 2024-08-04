@@ -1,8 +1,8 @@
 {
-    "name": "art-helper",
-    "displayName": "写作助手",
+    "name": "douyinlive",
+    "displayName": "抖音直播间商品监控",
     "version": "0.0.1",
-    "description": "文章写作助手，帮助你快速实现文章同步功能，可以同步到多个平台，节省你的时间。",
+    "description": "抖音直播间",
     "author": "1024xiaoshen",
     "scripts": {
         "dev": "plasmo dev",
@@ -31,12 +31,7 @@
     },
     "manifest": {
         "host_permissions": [
-            "*://*.csdn.net/",
-            "https://www.csdn.net/",
-            "https://juejin.cn/",
-            "https://www.cnblogs.com/",
-            "https://www.bilibili.com/",
-            "https://www.zhihu.com/"
+            "https://live.douyin.com/*"
         ],
         "permissions": [
             "cookies",
