@@ -10,31 +10,19 @@
     height: 180px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
 
-    .mainEdit {
-        width: 240px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 10px;
+    .inputBox {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        .helps {
-            font-size: 18px;
-            margin: 0 2px;
-            &:hover {
-                color: #1a7aff;
-            }
-        }
-    }
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
 
-    .asyncBox {
-        // width: 260px;
-        padding: 10px 15px;
-        .checkAll {
-            font-size: 15px;
-            margin-bottom: 4px;
+        .label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 6px;
         }
     }
 }
