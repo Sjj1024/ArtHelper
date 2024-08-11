@@ -20,6 +20,8 @@ let goodKeyList = []
 let currentKey = ''
 let listenNumber = 0
 
+//
+
 // inset listBtn into document
 const innsetHtml = async () => {
     console.log('listBtns one is ：')
@@ -132,36 +134,91 @@ const runPay = (goodEle: Element) => {
     })
 }
 
+// 根据标题匹配商品执行购买逻辑
+const switchTitlePay = async (good, val) => {
+    const title = good.querySelector(
+        'div.Y43O6OlD > div._RVz2Rea.zz01nUtb > span'
+    )?.innerHTML
+    goodKeyList = val && val.split(',')
+    // 判断标题是否包含关键词
+    if (
+        goodKeyList.length > 0 &&
+        goodKeyList.some((item: any) => {
+            var flag = title.includes(item)
+            if (flag) {
+                currentKey = item
+            }
+            return flag
+        })
+    ) {
+        console.log('匹配到了关键词', currentKey)
+        console.log('title', title)
+        await runPay(good)
+    }
+}
+
+// 根据原价和现价的差价购买
+const switchSubPay = async (good, val) => {
+    console.log('根据原价和现价差价购买')
+    const pricePre = good.querySelector(
+        'div.Y43O6OlD > div.bSqg0Bks > div > div.h_SMKwrz'
+    )?.innerText
+    const priceNow = good.querySelector(
+        'div.Y43O6OlD > div.bSqg0Bks > div > span'
+    )?.innerText
+    if (pricePre && priceNow) {
+        // pricePre ¥159 ¥59.9
+        console.log('pricePre', pricePre, priceNow)
+        const pricePreNum = parseFloat(pricePre.replace('¥', ''))
+        const priceNowNum = parseFloat(priceNow.replace('¥', ''))
+        const sub = pricePreNum - priceNowNum
+        if (sub >= val) {
+            console.log('差价满足条件', sub)
+            await runPay(good)
+        }
+    }
+}
+
+// 根据原价和现价比例购买
+const switchRatioPay = async (good, val) => {
+    console.log('根据原价和现价比例购买')
+    const pricePre = good.querySelector(
+        'div.Y43O6OlD > div.bSqg0Bks > div > div.h_SMKwrz'
+    )?.innerText
+    const priceNow = good.querySelector(
+        'div.Y43O6OlD > div.bSqg0Bks > div > span'
+    )?.innerText
+    if (pricePre && priceNow) {
+        // pricePre ¥159 ¥59.9
+        console.log('pricePre', pricePre, priceNow)
+        const pricePreNum = parseFloat(pricePre.replace('¥', ''))
+        const priceNowNum = parseFloat(priceNow.replace('¥', ''))
+        const ratio = priceNowNum / pricePreNum
+        if (ratio <= val) {
+            console.log('比例满足条件', ratio)
+            await runPay(good)
+        }
+    }
+}
+
 // 获取商品列表和关键词等信息,然后进行匹配
 const getGoods = async () => {
-    // 获取关键词
-    const keyworld: any = await storage.getItem('keyworld')
-    goodKeyList = keyworld && keyworld.split(',')
-    console.log('keyworldArr', goodKeyList)
     // 获取商品列表
     const goodsList = document.querySelectorAll(
         '#__living_right_panel_id > div > div > div > div > div > div > div > div.H9XscUc1.kcAx6UON > div > ul > li'
     )
+    // 获取监控类型，不同类型执行不同的匹配逻辑
+    const monitorType: any = await storage.getItem('type')
+    const monitorVal: any = await storage.getItem('value')
     // 遍历所有商品，并获取标题，和关键词匹配
     for (var good of goodsList) {
         console.log('good', goodsList.length)
-        const title = good.querySelector(
-            'div.Y43O6OlD > div._RVz2Rea.zz01nUtb > span'
-        )?.innerHTML
-        // 判断标题是否包含关键词
-        if (
-            goodKeyList.length > 0 &&
-            goodKeyList.some((item: any) => {
-                var flag = title.includes(item)
-                if (flag) {
-                    currentKey = item
-                }
-                return flag
-            })
-        ) {
-            console.log('匹配到了关键词', currentKey)
-            console.log('title', title)
-            await runPay(good)
+        if (monitorType == 'world') {
+            await switchTitlePay(good, monitorVal)
+        } else if (monitorType == 'rate') {
+            await switchRatioPay(good, monitorVal)
+        } else if (monitorType == 'sub') {
+            await switchSubPay(good, monitorVal)
         }
     }
 }
@@ -180,8 +237,6 @@ const listenPay = () => {
 // 监听商品变化
 const listenGoods = () => {
     console.log('start listen goods')
-    // 插入功能按钮
-    innsetHtml()
     //选择一个需要观察的节点
     var targetNode = document.querySelector('div.H9XscUc1.kcAx6UON')
     // 设置observer的配置选项
@@ -197,7 +252,7 @@ const listenGoods = () => {
         listenNumber += 1
         var goodTitle = document.querySelector('div.S2RN5zDw')
         if (goodTitle) {
-            goodTitle.innerHTML = '商品标题' + listenNumber
+            goodTitle.innerHTML = '商品变化' + listenNumber
         }
     }
     // 创建一个observer示例与回调函数相关联
