@@ -7,7 +7,7 @@ import cssText from 'data-text:~/contents/index.scss'
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'
-import { Select, Button } from 'antd'
+import { Select } from 'antd'
 import { StyleProvider } from '@ant-design/cssinjs'
 import antdResetCssText from 'data-text:antd/dist/reset.css'
 import { useEffect, useState } from 'react'
@@ -144,7 +144,7 @@ const PlasmoInline = () => {
                         container={document.getElementById(HOST_ID).shadowRoot}
                     >
                         <Select
-                            defaultValue={juejinCategory[0].category_id}
+                            defaultValue={juejinCategory[1].category_id}
                             style={{ width: 110 }}
                             size="small"
                             onChange={cateChange}
@@ -157,7 +157,10 @@ const PlasmoInline = () => {
                         标签:
                     </label>
                     <Select
-                        defaultValue={[juejinTags[0].tag_id]}
+                        defaultValue={[
+                            juejinTags[0].tag_id,
+                            juejinTags[2].tag_id,
+                        ]}
                         className="tagBox"
                         mode="multiple"
                         maxCount={3}
@@ -175,7 +178,7 @@ const PlasmoInline = () => {
                         mode="multiple"
                         maxCount={3}
                         size="small"
-                        defaultValue={[juejinColumns[0].column_id]}
+                        defaultValue={[juejinColumns[3].column_id]}
                         style={{ width: 124 }}
                         onChange={columnChange}
                         options={cols}

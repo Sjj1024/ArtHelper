@@ -63,6 +63,17 @@ const csdnClearAd = () => {
             document.querySelector('.traffic-show-box') as HTMLElement
         ).style.display = 'none'
     }
+    if (
+        document.querySelector(
+            '.csdn-profile-bottom > ul > li:nth-child(2) > a'
+        )
+    ) {
+        ;(
+            document.querySelector(
+                '.csdn-profile-bottom > ul > li:nth-child(2) > a'
+            ) as HTMLElement
+        ).style.display = 'none'
+    }
 }
 
 // 测试点击事件有多少个
