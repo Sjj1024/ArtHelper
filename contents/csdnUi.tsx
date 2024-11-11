@@ -59,10 +59,13 @@ const PlasmoInline = () => {
     }
 
     // init fun
+    const defaultCate = juejinCategory[1].category_id
+    const defaultTag = [juejinTags[0].tag_id, juejinTags[2].tag_id]
+    const defaultColumn = [juejinColumns[3].column_id]
     const initValue = () => {
-        storage.setItem('juejinCate', juejinCategory[0].category_id)
-        storage.setItem('juejinTag', [juejinTags[0].tag_id])
-        storage.setItem('juejinColumn', [juejinColumns[0].column_id])
+        storage.setItem('juejinCate', defaultCate)
+        storage.setItem('juejinTag', defaultTag)
+        storage.setItem('juejinColumn', defaultColumn)
     }
 
     // set select default value
@@ -144,7 +147,7 @@ const PlasmoInline = () => {
                         container={document.getElementById(HOST_ID).shadowRoot}
                     >
                         <Select
-                            defaultValue={juejinCategory[1].category_id}
+                            defaultValue={defaultCate}
                             style={{ width: 110 }}
                             size="small"
                             onChange={cateChange}
@@ -157,10 +160,7 @@ const PlasmoInline = () => {
                         标签:
                     </label>
                     <Select
-                        defaultValue={[
-                            juejinTags[0].tag_id,
-                            juejinTags[2].tag_id,
-                        ]}
+                        defaultValue={defaultTag}
                         className="tagBox"
                         mode="multiple"
                         maxCount={3}
@@ -178,7 +178,7 @@ const PlasmoInline = () => {
                         mode="multiple"
                         maxCount={3}
                         size="small"
-                        defaultValue={[juejinColumns[3].column_id]}
+                        defaultValue={defaultColumn}
                         style={{ width: 124 }}
                         onChange={columnChange}
                         options={cols}
