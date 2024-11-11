@@ -46,6 +46,7 @@ listenDom()
 const csdnHandle = () => {
     // clear ad
     csdnClearAd()
+    clickClick()
 }
 
 // csdn ad clear
@@ -73,6 +74,17 @@ const csdnClearAd = () => {
                 '.csdn-profile-bottom > ul > li:nth-child(2) > a'
             ) as HTMLElement
         ).style.display = 'none'
+    }
+}
+
+// click input checkbox
+const clickClick = () => {
+    const checkbox: any = document.querySelector(
+        '#moreDiv > div:nth-child(8) > div > label > span.el-checkbox__input > input'
+    )
+    if (checkbox.checked === false) {
+        checkbox.click()
+        console.log('checkbox', checkbox.checked)
     }
 }
 
