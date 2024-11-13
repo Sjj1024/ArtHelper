@@ -43,6 +43,9 @@ const CustomConfig = () => {
     }
 
     const handleOk = () => {
+        storage.setItem('type', typeValue)
+        storage.setItem('value', inputValue)
+        location.reload()
         setIsModalOpen(false)
     }
 
@@ -53,13 +56,11 @@ const CustomConfig = () => {
     const handleChange = (value: string) => {
         console.log(`selected ${value}`)
         setTypeValue(value)
-        storage.setItem('type', value)
         handleInputChange('')
     }
 
     const handleInputChange = (value: string) => {
         setInputValue(value)
-        storage.setItem('value', value)
     }
 
     useEffect(() => {

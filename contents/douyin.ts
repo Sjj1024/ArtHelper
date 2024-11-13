@@ -20,48 +20,6 @@ let goodKeyList = []
 let currentKey = ''
 let listenNumber = 0
 
-//
-
-// inset listBtn into document
-const innsetHtml = async () => {
-    console.log('listBtns one is ：')
-    document.querySelector(
-        '#__living_right_panel_id > div > div > div > div > div > div > div > div.S2RN5zDw'
-    ).innerHTML = '正在监听商品变化...'
-    // 如果没有插入过，才插入这个功能按钮
-    if (document.getElementById('listBtn')) {
-        console.log('listenBtn is exist')
-        // 查询到功能菜单按钮，添加
-        return
-    }
-    // check listBtn is published
-    const listBtn = document.createElement('div')
-    listBtn.id = 'listBtn'
-    listBtn.innerText = '抢购'
-    listBtn.style.color = 'white'
-    listBtn.style.cursor = 'pointer'
-    listBtn.style.fontSize = '20px'
-    listBtn.style.border = '1px solid #fff'
-    listBtn.style.borderRadius = '5px'
-    listBtn.style.padding = '5px 10px'
-    listBtn.style.marginRight = '10px'
-    listBtn.addEventListener('click', async () => {
-        const keyworld: any = await storage.getItem('keyworld')
-        var userInput = window.prompt(
-            '请输入关键词:(多个以英文逗号分隔)',
-            keyworld ?? ''
-        )
-        if (userInput != null) {
-            // 用户输入了数据，可以处理用户输入
-            console.log('用户输入的关键词是：', userInput)
-            await storage.setItem('keyworld', userInput)
-        }
-    })
-    // 查询到功能菜单按钮，添加
-    const menuBox = document.querySelector('#island_b69f5 > div')
-    menuBox.prepend(listBtn)
-}
-
 // 监听dom变化
 const listenDom = () => {
     console.log('all content listen dom remove ad')
@@ -87,6 +45,7 @@ const listenDom = () => {
         var payBox: HTMLElement = document.querySelector(
             'div.v5dad8VL.Qduxj7vP.HeQTjIYM > div.Iog1z8uI.TTWj1Xyq'
         )
+        // 检测到支付盒子并可以支付了
         if (payBox && !goodCanPay) {
             goodCanPay = true
             console.log('监听到了支付窗口')
@@ -109,7 +68,7 @@ const runPay = (goodEle: Element) => {
         goodBtn.click()
         // 点击去支付
         const payTimer = setInterval(() => {
-            // console.log('payTimer')
+            // 可以支付了，就去点击支付
             if (goodCanPay) {
                 // 支付按钮
                 var payBox: HTMLElement = document.querySelector(
@@ -119,14 +78,12 @@ const runPay = (goodEle: Element) => {
                 if (payBox) {
                     payBox.click()
                     clearInterval(payTimer)
-                    // 将关键词从列表中清除掉
-                    goodKeyList = goodKeyList.filter(
-                        (item: any) => item != currentKey
-                    )
-                    storage.setItem('keyworld', goodKeyList.join(','))
+                    // 将关键词从列表中清除掉，然后就不会自动购买了
+                    storage.setItem('value', '')
                     resolve(true)
                 } else {
                     console.log('payBox not found')
+                    clearInterval(payTimer)
                     reject(false)
                 }
             }
@@ -213,6 +170,12 @@ const getGoods = async () => {
     // 遍历所有商品，并获取标题，和关键词匹配
     for (var good of goodsList) {
         console.log('good', goodsList.length)
+        // 判断是不是已经抢光
+        const soldOut = good.querySelector('div.mAkqt5F0 > div.whVNvRNu')
+        if (soldOut && soldOut.innerHTML == '- 已抢光 -') {
+            console.log('商品已抢光')
+            continue
+        }
         if (monitorType == 'world') {
             await switchTitlePay(good, monitorVal)
         } else if (monitorType == 'rate') {
@@ -223,31 +186,20 @@ const getGoods = async () => {
     }
 }
 
-// 监测去支付按钮，并立即点击支付
-const listenPay = () => {
-    console.log('start listen pay')
-    // 选择一个需要观察的节点
-    var payNode: HTMLDivElement = document.querySelector(
-        'body > div:nth-child(125) > div.yGW2Oo6H > div.Z769DAb8.k0dJ_ARm > div > div > div.z3O4bsYz.CF11GksI > div.v5dad8VL.Qduxj7vP.HeQTjIYM > div.Iog1z8uI.TTWj1Xyq'
-    )
-    // 设置observer的配置选项
-    payNode.click()
-}
-
 // 监听商品变化
 const listenGoods = () => {
     console.log('start listen goods')
     //选择一个需要观察的节点
     var targetNode = document.querySelector('div.H9XscUc1.kcAx6UON')
     // 设置observer的配置选项
-    var configMutation = { attributes: false, childList: true, subtree: true }
+    var configMutation = { attributes: true, childList: true, subtree: true }
     // 当节点发生变化时的需要执行的函数
     var callback = (mutationsList, observer) => {
         // const curUrl = window.location.href
         // console.log('直播商品发生变化')
-        // 获取商品列表
+        // 获取商品列表并监测匹配和支付
         getGoods()
-        // 清空定时器
+        // 清空监测商品列表的定时器，不然第一次可能没有商品列表
         listenGoodTimer && clearInterval(listenGoodTimer)
         listenNumber += 1
         var goodTitle = document.querySelector('div.S2RN5zDw')

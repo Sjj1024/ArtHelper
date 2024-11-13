@@ -1,8 +1,8 @@
 {
     "name": "douyinlive",
-    "displayName": "抖音直播间商品监控",
+    "displayName": "直播间购",
     "version": "0.0.1",
-    "description": "抖音直播间",
+    "description": "直播间购物助手",
     "author": "1024xiaoshen",
     "scripts": {
         "dev": "plasmo dev",
