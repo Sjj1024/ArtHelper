@@ -37,7 +37,8 @@
             "https://juejin.cn/",
             "https://www.cnblogs.com/",
             "https://www.bilibili.com/",
-            "https://www.zhihu.com/"
+            "https://www.zhihu.com/",
+            "https://uiadmin.net/"
         ],
         "permissions": [
             "cookies",

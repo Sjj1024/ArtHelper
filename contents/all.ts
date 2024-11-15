@@ -7,6 +7,8 @@ export const config: PlasmoCSConfig = {
         'https://mp.csdn.net/*',
         'https://juejin.cn/*',
         'https://www.cnblogs.com/*',
+        'https://csdn.net/*',
+        'https://uiadmin.net/*',
     ],
 }
 
@@ -27,8 +29,13 @@ const listenDom = () => {
         listenCsdnTitle(curUrl)
         listenCsdnContent(curUrl)
         // clickNum(curUrl)
-        if (curUrl.includes('mp.csdn.net/mp_blog')) {
+        if (
+            curUrl.includes('mp.csdn.net/mp_blog') ||
+            curUrl.includes('csdn.net')
+        ) {
             csdnHandle()
+        } else if (curUrl.includes('uiadmin.net')) {
+            uiadminHandle()
         }
     }
     // 创建一个observer示例与回调函数相关联
@@ -47,6 +54,37 @@ const csdnHandle = () => {
     // clear ad
     csdnClearAd()
     clickClick()
+}
+
+// uiadmin handle
+const uiadminHandle = () => {
+    console.log('uiadmin handle')
+    if (document.querySelector('.v-modal')) {
+        ;(document.querySelector('.v-modal') as HTMLElement).style.display =
+            'none'
+    }
+    if (
+        document.querySelector(
+            '#app > div.theme-container > main > div:nth-child(5) > div'
+        )
+    ) {
+        ;(
+            document.querySelector(
+                '#app > div.theme-container > main > div:nth-child(5) > div'
+            ) as HTMLElement
+        ).style.display = 'none'
+    }
+    if (
+        document.querySelector(
+            '#app > div.theme-container > main > div:nth-child(4) > div'
+        )
+    ) {
+        ;(
+            document.querySelector(
+                '#app > div.theme-container > main > div:nth-child(4) > div'
+            ) as HTMLElement
+        ).style.display = 'none'
+    }
 }
 
 // csdn ad clear
