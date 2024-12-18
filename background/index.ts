@@ -13,7 +13,10 @@ const storage = new Storage({
 // csdn发送文章平台请求地址, 也是background脚本检测文章发布的请求地址
 const sendUrls = [
     'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
+    'https://api.juejin.cn/content_api/v1/column/author_center_list?aid=2608&uuid=7392137755348682259&spider=0',
 ]
+
+let isSendJuejin = false
 
 interface Article {
     id: string
@@ -83,36 +86,37 @@ const setBadgeHide = () => {
     // )
 }
 
-// csdn：status = 0
-// {
-//   "article_id": "137015832",
-//   "title": "阿里云OSS连接工具",
-//   "description": "",
-//   "content": "---",
-//   "markdowncontent": "",
-//   "tags": "阿里云,云计算",
-//   "categories": "",
-//   "type": "original",
-//   "status": 0,
-//   "read_type": "public",
-//   "reason": "",
-//   "resource_url": "",
-//   "resource_id": "",
-//   "original_link": "",
-//   "authorized_status": false,
-//   "check_original": false,
-//   "editor_type": 0,
-//   "plan": [],
-//   "vote_id": 0,
-//   "scheduled_time": 0,
-//   "level": "1",
-//   "cover_type": 1,
-//   "cover_images": [
-//       "https://img-blog.csdnimg.cn/direct/16a524894695417eaa2617eedb117faa.png"
-//   ],
-//   "not_auto_saved": 1,
-//   "is_new": 1
-// }
+// fetch juejin category list
+const fetchJuejinCategory = async () => {
+    isSendJuejin = true
+    fetch(
+        'https://api.juejin.cn/content_api/v1/column/author_center_list?aid=2608&uuid=7392137755348682259&spider=0',
+        {
+            headers: {
+                accept: '*/*',
+                'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+                'content-type': 'application/json',
+                priority: 'u=1, i',
+                'sec-ch-ua':
+                    '"Google Chrome";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"macOS"',
+                'sec-fetch-dest': 'empty',
+                'sec-fetch-mode': 'cors',
+                'sec-fetch-site': 'same-site',
+                'x-secsdk-csrf-token':
+                    '0001000000013653201c5613e44c2a17944b0cfcd6ff1996bcc07e523279d7bef579d172c78b18123a6f853f6262',
+                cookie: 'csrf_session_id=7ba74a86552e8f84b3c0d7bfffcd9d2f; _tea_utm_cache_2608=undefined; __tea_cookie_tokens_2608=%257B%2522user_unique_id%2522%253A%25227392137755348682259%2522%252C%2522web_id%2522%253A%25227392137755348682259%2522%252C%2522timestamp%2522%253A1734231133127%257D; passport_csrf_token=048f0ddae33d5acd6d4417e8c857d5c3; passport_csrf_token_default=048f0ddae33d5acd6d4417e8c857d5c3; n_mh=nNwOatDm453msvu0tqEj4bZm3NsIprwo6zSkIjLfICk; sid_guard=c06ecb1e9bd93627ffc006f56b36c389%7C1734441141%7C31536000%7CWed%2C+17-Dec-2025+13%3A12%3A21+GMT; uid_tt=7741335db523caa10ca959a0c3b97e15; uid_tt_ss=7741335db523caa10ca959a0c3b97e15; sid_tt=c06ecb1e9bd93627ffc006f56b36c389; sessionid=c06ecb1e9bd93627ffc006f56b36c389; sessionid_ss=c06ecb1e9bd93627ffc006f56b36c389; is_staff_user=false; sid_ucp_v1=1.0.0-KDc1MjE1Mjg0NDU3ODQ2YTQ2ZjQ0ZGJjZjQzZmY3NjdmY2I0OGY2ZjMKFgj-8fDivfUPELXxhbsGGLAUOAdA9AcaAmxmIiBjMDZlY2IxZTliZDkzNjI3ZmZjMDA2ZjU2YjM2YzM4OQ; ssid_ucp_v1=1.0.0-KDc1MjE1Mjg0NDU3ODQ2YTQ2ZjQ0ZGJjZjQzZmY3NjdmY2I0OGY2ZjMKFgj-8fDivfUPELXxhbsGGLAUOAdA9AcaAmxmIiBjMDZlY2IxZTliZDkzNjI3ZmZjMDA2ZjU2YjM2YzM4OQ; store-region=cn-sh; store-region-src=uid; juejinDone=7449623993093439526',
+                Referer: 'https://juejin.cn/',
+                'Referrer-Policy': 'strict-origin-when-cross-origin',
+            },
+            body: '{"audit_status":null,"page_no":1,"page_size":10}',
+            method: 'POST',
+        }
+    ).then((res) => {
+        console.log('juejin category list', res)
+    })
+}
 
 // 拦截请求处理函数
 const filterHandler = (details: any) => {
@@ -233,6 +237,12 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
     }
 })
 
+// 过滤响应体
+const filterResponse = (details: any) => {
+    console.log('filterResponse', details)
+    // !isSendJuejin && fetchJuejinCategory()
+}
+
 // 监听发送请求：get csdn post and update juejin article
 chrome.webRequest.onBeforeRequest.addListener(
     filterHandler,
@@ -240,4 +250,13 @@ chrome.webRequest.onBeforeRequest.addListener(
         urls: sendUrls,
     },
     ['requestBody']
+)
+
+// 监听response 内容
+chrome.webRequest.onResponseStarted.addListener(
+    filterResponse,
+    {
+        urls: sendUrls,
+    },
+    ['responseHeaders']
 )

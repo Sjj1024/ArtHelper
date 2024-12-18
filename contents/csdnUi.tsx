@@ -61,7 +61,7 @@ const PlasmoInline = () => {
     // init fun
     const defaultCate = juejinCategory[1].category_id
     const defaultTag = [juejinTags[0].tag_id, juejinTags[2].tag_id]
-    const defaultColumn = [juejinColumns[3].column_id]
+    const defaultColumn = [juejinColumns[5].column_id]
     const initValue = () => {
         storage.setItem('juejinCate', defaultCate)
         storage.setItem('juejinTag', defaultTag)
