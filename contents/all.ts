@@ -14,7 +14,6 @@ export const config: PlasmoCSConfig = {
 
 // current web url
 var curUrl = window.location.href
-
 // 监听dom变化
 const listenDom = () => {
     console.log('all content listen dom remove ad')
@@ -60,8 +59,9 @@ const csdnHandle = () => {
 const uiadminHandle = () => {
     console.log('uiadmin handle')
     if (document.querySelector('.v-modal')) {
-        ;(document.querySelector('.v-modal') as HTMLElement).style.display =
-            'none'
+        ;(document.querySelector('.v-modal') as HTMLElement).style.width = '0px'
+        ;(document.querySelector('.v-modal') as HTMLElement).style.height =
+            '0px'
     }
     if (
         document.querySelector(
@@ -72,7 +72,12 @@ const uiadminHandle = () => {
             document.querySelector(
                 '#app > div.theme-container > main > div:nth-child(5) > div'
             ) as HTMLElement
-        ).style.display = 'none'
+        ).style.width = '0px'
+        ;(
+            document.querySelector(
+                '#app > div.theme-container > main > div:nth-child(5) > div'
+            ) as HTMLElement
+        ).style.height = '0px'
     }
     if (
         document.querySelector(
@@ -83,7 +88,12 @@ const uiadminHandle = () => {
             document.querySelector(
                 '#app > div.theme-container > main > div:nth-child(4) > div'
             ) as HTMLElement
-        ).style.display = 'none'
+        ).style.width = '0px'
+        ;(
+            document.querySelector(
+                '#app > div.theme-container > main > div:nth-child(4) > div'
+            ) as HTMLElement
+        ).style.height = '0px'
     }
 }
 
