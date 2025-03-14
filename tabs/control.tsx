@@ -124,7 +124,7 @@ function DeltaFlyerPage() {
     // get juejin category data
     const getJuejin = async () => {
         storage.getItem('juejinCate').then((res: any) => {
-            console.log('获取到的掘金数据:', res)
+            console.log('control 获取到的掘金数据:', res)
         })
     }
 
@@ -139,7 +139,9 @@ function DeltaFlyerPage() {
     return (
         <>
             <div className="titleBox">
-                <h2 className="label">缓存的文章列表</h2>
+                <h2 className="label">
+                    缓存的文章列表(掘金需要先切换到md编辑器)
+                </h2>
                 <Button type="primary" className="btn" onClick={openDoc}>
                     使用文档
                 </Button>

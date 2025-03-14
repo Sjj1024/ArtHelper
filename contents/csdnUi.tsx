@@ -50,9 +50,6 @@ export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
     return null
 }
 
-// Use this to optimize unmount lookups
-// export const getShadowHostId = () => 'plasmo-inline-example-unique-id'
-
 const PlasmoInline = () => {
     // default category value
     const [category, setCategory] = useState(0)
@@ -68,7 +65,7 @@ const PlasmoInline = () => {
         storage.setItem('juejinCate', value)
     }
 
-    // tag change
+    // tag change 掘金
     const tageChange = (value: any) => {
         console.log('tage selected change', value)
         setTag(value)
@@ -86,14 +83,17 @@ const PlasmoInline = () => {
         storage.getItem('jjDefaultCate').then((res: any) => {
             console.log('jjDefaultCate is', res)
             setCategory(res)
+            storage.setItem('juejinCate', res)
         })
         storage.getItem('jjDefaultTag').then((res: any) => {
             console.log('jjDefaultTag is', res)
             setTag(res)
+            storage.setItem('juejinTag', res)
         })
         storage.getItem('jjDefaultColumn').then((res: any) => {
             console.log('jjDefaultColumn is', res)
             setColumn(res)
+            storage.setItem('juejinColumn', res)
         })
     }
 
