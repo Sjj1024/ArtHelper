@@ -14,7 +14,11 @@ const storage = new Storage({
 const sendUrls = [
     'https://bizapi.csdn.net/blog-console-api/v1/postedit/saveArticle',
     'https://api.juejin.cn/content_api/v1/column/author_center_list?aid=2608&uuid=7392137755348682259&spider=0',
+    'https://api.github.com/*',
+    'https://bizapi.csdn.net/*',
 ]
+
+const resUrls = ['*://dev.hado-official.cn/*']
 
 let isSendJuejin = false
 
@@ -120,7 +124,7 @@ const fetchJuejinCategory = async () => {
 
 // 拦截请求处理函数
 const filterHandler = (details: any) => {
-    console.log('art helper filter handler get')
+    console.log('art helper filter handler get', details)
     // csdn发送文章的逻辑
     if (details.method == 'POST' && sendUrls.includes(details.url)) {
         console.log('请求详情', details)
