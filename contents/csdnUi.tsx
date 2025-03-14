@@ -5,7 +5,7 @@ import type {
 } from 'plasmo'
 import cssText from 'data-text:~/contents/index.scss'
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { juejinCategory, juejinColumns, juejinTags } from 'utils/cookie'
+import { juejinCategory, juejinTags } from 'utils/cookie'
 import { Storage } from '@plasmohq/storage'
 import { Select } from 'antd'
 import { StyleProvider } from '@ant-design/cssinjs'
@@ -13,7 +13,11 @@ import antdResetCssText from 'data-text:antd/dist/reset.css'
 import { useEffect, useState } from 'react'
 
 export const config: PlasmoCSConfig = {
-    matches: ['https://mp.csdn.net/*'],
+    matches: [
+        'https://mp.csdn.net/*',
+        'https://mpbeta.csdn.net/*',
+        'https://editor.csdn.net/*',
+    ],
 }
 
 // 初始化仓库存储
@@ -33,39 +37,64 @@ const HOST_ID = 'engage-csui'
 export const getShadowHostId: PlasmoGetShadowHostId = () => HOST_ID
 
 // insert into page dom
-export const getInlineAnchor: PlasmoGetInlineAnchor = () =>
-    document.querySelector(`#moreDiv > div:nth-child(9)`)
+export const getInlineAnchor: PlasmoGetInlineAnchor = () => {
+    const divMore = document.querySelector(`#moreDiv > div:nth-child(9)`)
+    if (divMore) {
+        return divMore
+    }
+    // markdown inline
+    const divMarkdown = document.querySelector(`#moreDiv > div:nth-child(9)`)
+    if (divMarkdown) {
+        return divMarkdown
+    }
+    return null
+}
 
 // Use this to optimize unmount lookups
 // export const getShadowHostId = () => 'plasmo-inline-example-unique-id'
 
 const PlasmoInline = () => {
+    // default category value
+    const [category, setCategory] = useState(0)
+    // default tag value
+    const [tag, setTag] = useState([])
+    // default column value
+    const [column, setColumn] = useState([])
+
     // category change
     const cateChange = (value: any) => {
         console.log(`selected handle change`, value)
+        setCategory(value)
         storage.setItem('juejinCate', value)
     }
 
     // tag change
     const tageChange = (value: any) => {
         console.log('tage selected change', value)
+        setTag(value)
         storage.setItem('juejinTag', value)
     }
 
     // column changejuejinColumn
     const columnChange = (value: any) => {
         console.log('column selected change', value)
+        setColumn(value)
         storage.setItem('juejinColumn', value)
     }
 
-    // init fun
-    const defaultCate = juejinCategory[1].category_id
-    const defaultTag = [juejinTags[0].tag_id, juejinTags[2].tag_id]
-    const defaultColumn = [juejinColumns[5].column_id]
     const initValue = () => {
-        storage.setItem('juejinCate', defaultCate)
-        storage.setItem('juejinTag', defaultTag)
-        storage.setItem('juejinColumn', defaultColumn)
+        storage.getItem('jjDefaultCate').then((res: any) => {
+            console.log('jjDefaultCate is', res)
+            setCategory(res)
+        })
+        storage.getItem('jjDefaultTag').then((res: any) => {
+            console.log('jjDefaultTag is', res)
+            setTag(res)
+        })
+        storage.getItem('jjDefaultColumn').then((res: any) => {
+            console.log('jjDefaultColumn is', res)
+            setColumn(res)
+        })
     }
 
     // set select default value
@@ -79,50 +108,23 @@ const PlasmoInline = () => {
                 value: item.category_id,
             }
         })
+        setCates(cateList)
+
         const tagList = juejinTags.map((item) => {
             return {
                 label: item.tag.tag_name,
                 value: item.tag_id,
             }
         })
-        const colList = juejinColumns.map((item) => {
-            return {
-                label: item.column_version.title,
-                value: item.column_id,
-            }
-        })
-        console.log('cate list is', cateList)
-        setCates(cateList)
         setTags(tagList)
-        setCols(colList)
-    }
 
-    const options = [
-        {
-            label: 'China',
-            value: 'china',
-            emoji: '🇨🇳',
-            desc: 'China (中国)',
-        },
-        {
-            label: 'USA',
-            value: 'usa',
-            emoji: '🇺🇸',
-            desc: 'USA (美国)',
-        },
-        {
-            label: 'Japan',
-            value: 'japan',
-            emoji: '🇯🇵',
-            desc: 'Japan (日本)',
-        },
-        {
-            label: 'Korea',
-            value: 'korea',
-            emoji: '🇰🇷',
-            desc: 'Korea (韩国)',
-        },
-    ]
+        storage.getItem('juejincolumn').then((res: any) => {
+            console.log('juejincolumn list is', res)
+            setCols(res)
+        })
+
+        console.log('cate list is', cateList)
+    }
 
     // init reset cate tag and column value
     useEffect(() => {
@@ -147,7 +149,7 @@ const PlasmoInline = () => {
                         container={document.getElementById(HOST_ID).shadowRoot}
                     >
                         <Select
-                            defaultValue={defaultCate}
+                            value={category}
                             style={{ width: 110 }}
                             size="small"
                             onChange={cateChange}
@@ -160,7 +162,7 @@ const PlasmoInline = () => {
                         标签:
                     </label>
                     <Select
-                        defaultValue={defaultTag}
+                        value={tag}
                         className="tagBox"
                         mode="multiple"
                         maxCount={3}
@@ -176,9 +178,9 @@ const PlasmoInline = () => {
                     </label>
                     <Select
                         mode="multiple"
-                        maxCount={3}
+                        maxCount={1}
                         size="small"
-                        defaultValue={defaultColumn}
+                        value={column}
                         style={{ width: 124 }}
                         onChange={columnChange}
                         options={cols}

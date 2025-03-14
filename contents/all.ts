@@ -1,22 +1,31 @@
 import type { PlasmoCSConfig } from 'plasmo'
+import { Storage } from '@plasmohq/storage'
 
 // 可以匹配多个网址
 export const config: PlasmoCSConfig = {
     matches: [
         'https://www.csdn.net/*',
         'https://mp.csdn.net/*',
+        'https://editor.csdn.net/*',
         'https://juejin.cn/*',
         'https://www.cnblogs.com/*',
         'https://csdn.net/*',
         'https://uiadmin.net/*',
+        'https://mpbeta.csdn.net/*',
     ],
 }
 
+// 初始化仓库存储
+const storage = new Storage({
+    area: 'local',
+})
+
 // current web url
 var curUrl = window.location.href
+
 // 监听dom变化
 const listenDom = () => {
-    console.log('all content listen dom remove ad')
+    console.log('all content listen dom remove ad and get juejin category')
     //选择一个需要观察的节点
     var targetNode = document.body
     // 设置observer的配置选项
@@ -24,17 +33,22 @@ const listenDom = () => {
     // 当节点发生变化时的需要执行的函数
     var callback = (mutationsList, observer) => {
         // const curUrl = window.location.href
-        // console.log('监听所有页面资源加载完成的脚本', curUrl)
+        console.log('监听所有页面资源加载完成的脚本', curUrl)
         listenCsdnTitle(curUrl)
         listenCsdnContent(curUrl)
         // clickNum(curUrl)
         if (
             curUrl.includes('mp.csdn.net/mp_blog') ||
-            curUrl.includes('csdn.net')
+            curUrl.includes('csdn.net') ||
+            curUrl.includes('mpbeta.csdn.net')
         ) {
             csdnHandle()
         } else if (curUrl.includes('uiadmin.net')) {
             uiadminHandle()
+        } else if (
+            curUrl.includes('https://juejin.cn/creator/content/column')
+        ) {
+            getJuejinCategory()
         }
     }
     // 创建一个observer示例与回调函数相关联
@@ -53,6 +67,33 @@ const csdnHandle = () => {
     // clear ad
     csdnClearAd()
     clickClick()
+}
+
+// 获取掘金分类
+const getJuejinCategory = () => {
+    const columnList = document.querySelector('.column-list')
+    console.log('掘金分类', columnList)
+    // 获取所有 a 标签
+    const links = columnList.querySelectorAll('a.column-link')
+    // 用于存储结果的数组
+    const result = []
+    // 遍历每个 a 标签
+    links.forEach((link) => {
+        // 获取 a 标签的 href 属性
+        const href = link.getAttribute('href')
+        // 从 href 中提取最后的 ID
+        const id = href.split('/').pop() // 获取链接的最后一部分作为 ID
+        // 获取 a 标签内 class="title" 的 span 标签中的文字
+        const title = link.querySelector('span.title').textContent.trim()
+        // 将 ID 和 title 组成对象，并添加到结果数组中
+        result.push({
+            value: id,
+            label: title,
+        })
+    })
+    // 输出结果
+    console.log('掘金分类', result)
+    storage.setItem('juejincolumn', result)
 }
 
 // uiadmin handle
@@ -103,6 +144,15 @@ const csdnClearAd = () => {
     if (document.getElementById('nps-box')) {
         document.getElementById('nps-box').style.display = 'none'
     }
+    if (document.querySelectorAll('#moreDiv .el_mcm-form-item')) {
+        const formItems = document.querySelectorAll(
+            '#moreDiv .el_mcm-form-item'
+        )
+        formItems.forEach((item: any) => {
+            console.log('移除多余form item', item)
+            item.style.marginBottom = '0px'
+        })
+    }
     if (document.querySelector('.tip-box')) {
         const parent = document.querySelector('.tip-box').parentElement
         parent.removeChild(parent.lastElementChild)
@@ -127,9 +177,13 @@ const csdnClearAd = () => {
 
 // click input checkbox
 const clickClick = () => {
-    const checkbox: any = document.querySelector(
-        '#moreDiv > div:nth-child(8) > div > label > span.el-checkbox__input > input'
-    )
+    const checkbox: any =
+        document.querySelector(
+            '#moreDiv > div:nth-child(8) > div > label > span.el-checkbox__input > input'
+        ) ||
+        document.querySelector(
+            '#moreDiv > div:nth-child(8) > div.el_mcm-form-item__content > label > span.el_mcm-checkbox__input > input'
+        )
     if (checkbox.checked === false) {
         checkbox.click()
         console.log('checkbox', checkbox.checked)

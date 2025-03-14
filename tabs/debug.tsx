@@ -68,6 +68,12 @@ function DeltaFlyerPage() {
         setItems([])
     }
 
+    // 获取掘金分类
+    const getJuejinColumn = async () => {
+        const juejinColumn = await storage.getItem('juejincolumn')
+        console.log('掘金分类', juejinColumn)
+    }
+
     // get sync platform list
     const getSyncPlatforms = async () => {
         const platforms = await storage.get('platforms')
@@ -194,7 +200,11 @@ function DeltaFlyerPage() {
                 <Button type="primary" className="btn" onClick={clearData}>
                     清空数据
                 </Button>
-                <Button type="primary" className="btn" onClick={getSyncPlatforms}>
+                <Button
+                    type="primary"
+                    className="btn"
+                    onClick={getSyncPlatforms}
+                >
                     选中平台
                 </Button>
                 <Button type="primary" className="btn" onClick={setIcon}>
@@ -220,6 +230,13 @@ function DeltaFlyerPage() {
                 </Button>
                 <Button type="primary" className="btn" onClick={getOne}>
                     GetOne
+                </Button>
+                <Button
+                    type="primary"
+                    className="btn"
+                    onClick={getJuejinColumn}
+                >
+                    获取掘金分类
                 </Button>
             </div>
             <Collapse accordion items={items} />
