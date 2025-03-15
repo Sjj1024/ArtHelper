@@ -1,1 +1,0 @@
-import{$ as a}from"./index-efa3a32c.js";const e={gameList:e=>a({url:"service_api/gaming_record",method:"get",params:e}),gameDetail:e=>a({url:"service_api/game_first_data",method:"get",params:e}),storeData:e=>a({url:"service_api/store_operate_data",method:"get",params:e}),storeBar:e=>a({url:"service_api/store_histogram_data",method:"get",params:e})};export{e as g};
