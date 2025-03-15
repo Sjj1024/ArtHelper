@@ -1,0 +1,1 @@
+.searchBar{display:flex;flex-direction:row;align-items:center;justify-content:space-between}.searchBar .searchUl{display:flex;flex-direction:row;align-items:center}.searchBar .searchUl .searchLi{display:flex;align-items:center;justify-content:center}.searchBar .searchUl .searchLi .searchSpan{width:130px;padding-left:20px;text-align:center}
