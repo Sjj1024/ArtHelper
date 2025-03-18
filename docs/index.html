@@ -1,21 +1,60 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/app.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>PakePlus</title>
-      <script type="module" crossorigin src="/assets/index-DoAXaqvN.js"></script>
-      <link rel="modulepreload" crossorigin href="/assets/vue-BPSDSsAv.js">
-      <link rel="modulepreload" crossorigin href="/assets/largeLibrary-D8rVyQy1.js">
-      <link rel="modulepreload" crossorigin href="/assets/router-C-XSGGyl.js">
-      <link rel="modulepreload" crossorigin href="/assets/pinia-BX9M9K7k.js">
-      <link rel="modulepreload" crossorigin href="/assets/element-CMfoRY8r.js">
-      <link rel="modulepreload" crossorigin href="/assets/codemirror-CCb9JZrN.js">
-      <link rel="stylesheet" crossorigin href="/assets/index-C9PhRJsg.css">
+        <title>Document</title>
     </head>
-
     <body>
-        <div id="app"></div>
+        <div id="app">
+            <h1>Hello World</h1>
+            <img src="./app.svg" alt="" />
+            <button>惦记我</button>
+        </div>
+        <script>
+            const app = document.getElementById('app')
+            const img = document.createElement('img')
+            img.src = 'https://www.baidu.com/img/flexible/logo/pc/result.png'
+            app.appendChild(img)
+            const button = document.createElement('button')
+            button.textContent = '惦记我'
+            app.appendChild(button)
+            button.addEventListener('click', () => {
+                var myHeaders = new Headers()
+                myHeaders.append('Accept', '*/*')
+                myHeaders.append('Accept-Language', 'zh-CN,zh;q=0.9,en;q=0.8')
+                myHeaders.append('Cache-Control', 'no-cache')
+                myHeaders.append('Connection', 'keep-alive')
+                myHeaders.append('Pragma', 'no-cache')
+                myHeaders.append('Referer', 'https://quote.eastmoney.com/')
+                myHeaders.append('Sec-Fetch-Dest', 'script')
+                myHeaders.append('Sec-Fetch-Mode', 'no-cors')
+                myHeaders.append('Sec-Fetch-Site', 'same-site')
+                myHeaders.append(
+                    'User-Agent',
+                    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36'
+                )
+                myHeaders.append(
+                    'sec-ch-ua',
+                    '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"'
+                )
+                myHeaders.append('sec-ch-ua-mobile', '?0')
+                myHeaders.append('sec-ch-ua-platform', '"macOS"')
+
+                var requestOptions = {
+                    method: 'GET',
+                    headers: myHeaders,
+                    redirect: 'follow',
+                }
+
+                fetch(
+                    'https://72.push2.eastmoney.com/api/qt/stock/get?ut=fa5fd1943c7b386f172d6893dbfba10b&fltt=2&invt=2&volt=2&fields=f152,f288,f43,f57,f58,f169,f170,f46,f44,f51,f168,f47,f164,f116,f60,f45,f52,f50,f48,f167,f117,f71,f161,f49,f530,f135,f136,f137,f138,f139,f141,f142,f144,f145,f147,f148,f140,f143,f146,f149,f55,f62,f162,f92,f173,f104,f105,f84,f85,f183,f184,f185,f186,f187,f188,f189,f190,f191,f192,f107,f111,f86,f177,f78,f110,f262,f263,f264,f267,f268,f250,f251,f252,f253,f254,f255,f256,f257,f258,f266,f269,f270,f271,f273,f274,f275,f127,f199,f128,f198,f259,f260,f261,f171,f277,f278,f279,f31,f32,f33,f34,f35,f36,f37,f38,f39,f40,f20,f19,f18,f17,f16,f15,f14,f13,f12,f11,f531,f59&secid=0.300059&cb=jQuery3510961514346284666_1742045857091&_=1742045857095',
+                    requestOptions
+                )
+                    .then((response) => response.text())
+                    .then((result) => console.log(result))
+                    .catch((error) => console.log('error', error))
+            })
+        </script>
     </body>
 </html>
