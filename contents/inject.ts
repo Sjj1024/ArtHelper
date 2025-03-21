@@ -59,3 +59,22 @@
 //         originalXHRSend.apply(this, arguments)
 //     }
 // })()
+
+// 获取页面中所有请求的域名
+;(function () {
+    const domains = new Set()
+    const requests = performance.getEntriesByType('resource')
+    requests.forEach((request) => {
+        try {
+            const url = new URL(request.name)
+            domains.add(url.hostname)
+        } catch (e) {
+            console.error('Invalid URL:', request.name)
+        }
+    })
+    // 统计一共有多少个，并将域名用逗号拼接
+    const domainsCount = domains.size
+    console.log('Domains count:', domainsCount)
+    const domainsStr = Array.from(domains).join(',')
+    console.log('Domains used:', domainsStr)
+})()
