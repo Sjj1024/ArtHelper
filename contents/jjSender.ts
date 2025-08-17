@@ -260,6 +260,18 @@ const updateArt = (id, title, content) => {
         })
 }
 
+// find theme lottery
+const findThemeLottery = () => {
+    const themes = localStorage.getItem('themes')
+    console.log('get juejin themes:', themes)
+    const themeList = JSON.parse(themes)
+    console.log('get juejin themes list:', themeList)
+    // find theme lottery
+    const themeLottery = themeList.find((theme) => theme.is_lottery === true)
+    console.log('get juejin theme lottery:', themeLottery)
+    return [themeLottery.theme_id]
+}
+
 //send fetch update juejin article
 const updateArt2 = (id, title, content) => {
     const link_url = ''

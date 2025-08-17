@@ -109,9 +109,11 @@ function DeltaFlyerPage() {
 
     // get juejin category data
     const getJuejin = async () => {
-        storage.getItem('juejinCate').then((res: any) => {
-            console.log('获取到的掘金数据:', res)
-        })
+        // storage.getItem('juejinCate').then((res: any) => {
+        //     console.log('获取到的掘金数据:', res)
+        // })
+        const themes = await storage.getItem('themes')
+        console.log('get juejin themes:', themes)
     }
 
     // change action icon
