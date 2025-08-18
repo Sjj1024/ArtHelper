@@ -281,7 +281,7 @@ const updateArt2 = (id, title, content) => {
     const edit_type = 10
     const html_content = 'deprecated'
     const mark_content = content
-    const theme_ids = []
+    const theme_ids = findThemeLottery()
     const postJson = {
         id,
         category_id: category,
