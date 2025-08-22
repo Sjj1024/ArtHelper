@@ -10,12 +10,12 @@
         "package": "plasmo package"
     },
     "dependencies": {
-        "@ant-design/cssinjs": "^1.20.0",
-        "@ant-design/icons": "^5.3.1",
-        "@arco-design/web-react": "^2.61.2",
+        "@ant-design/cssinjs": "^1.23.0",
+        "@ant-design/icons": "^5.6.1",
+        "@arco-design/web-react": "^2.65.0",
         "@plasmohq/messaging": "^0.6.2",
-        "@plasmohq/storage": "^1.9.3",
-        "antd": "^5.14.2",
+        "@plasmohq/storage": "^1.15.0",
+        "antd": "^5.24.3",
         "plasmo": "0.85.0",
         "react": "18.2.0",
         "react-dom": "18.2.0",
@@ -29,6 +29,8 @@
         "@types/react": "18.2.48",
         "@types/react-dom": "18.2.18",
         "prettier": "3.2.4",
+        "sass": "^1.90.0",
+        "sass-loader": "^16.0.5",
         "typescript": "5.3.3"
     },
     "manifest": {

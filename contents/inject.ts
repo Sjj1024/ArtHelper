@@ -36,12 +36,22 @@ export const config: PlasmoCSConfig = {
                         const data = JSON.parse(body)
                         console.log('1024小神 Fetched data:', data)
                         if (data.err_no === 0) {
-                            const themes = data.data
+                            // const themes = data.data
+                            const themes = data.data.map((item) => {
+                                return {
+                                    key: item.theme.theme_id,
+                                    value: item.theme.theme_id,
+                                    label: item.theme.name,
+                                    is_lottery: item.theme.is_lottery,
+                                }
+                            })
                             console.log('1024小神 Fetched themes:', themes)
-                            localStorage.setItem(
-                                'themes',
-                                JSON.stringify(themes)
-                            )
+                            // localStorage.setItem(
+                            //     'juejinThemes',
+                            //     JSON.stringify(themes)
+                            // )
+                            // update juejin cookie juejinDone send message to close win
+                            document.cookie = `juejinThemes=${JSON.stringify(themes)}; path=/; domain=juejin.cn; secure`
                         }
                     }
                 })

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Storage } from '@plasmohq/storage'
 import './index.scss'
 import imgPath from 'url:~/assets/icon.png'
-import { Switch, Row, Col, Select } from 'antd'
+import { Switch, Row, Col, Select, Input } from 'antd'
+const { TextArea } = Input
 import { juejinCategory, juejinTags } from 'utils/cookie'
 
 // 初始化仓库存储
@@ -25,6 +26,13 @@ function DeltaFlyerPage() {
     const [column, setColumn] = useState([])
     // 掘金全部分类
     const [allColumn, setAllColumn] = useState([])
+    // 掘金主题
+    const [jjTheme, setJjTheme] = useState('')
+    const [juejinThemes, setJuejinThemes] = useState([])
+    // 前置内容
+    const [preContent, setPreContent] = useState('')
+    // 后置内容
+    const [postContent, setPostContent] = useState('')
 
     // set category value
     const setCategoryValue = (value: any) => {
@@ -45,6 +53,13 @@ function DeltaFlyerPage() {
         console.log('setColumnValue-----', value)
         setColumn(value)
         storage.setItem('jjDefaultColumn', value)
+    }
+
+    // set juejinhemes value
+    const setJuejinThemesValue = (value: any) => {
+        console.log('setJuejinhemesValue-----', value)
+        setJjTheme(value)
+        storage.setItem('jjDefaultThemes', value)
     }
 
     // hand signin action
@@ -76,6 +91,24 @@ function DeltaFlyerPage() {
         setCategory(category)
         setTag(tag)
         setColumn(column)
+        // 设置掘金主题
+        const jjTheme = await storage.getItem('jjDefaultThemes')
+        setJjTheme(jjTheme)
+        const juejinThemes: any = await storage.getItem('juejinThemes')
+        const juejinThemesList = JSON.parse(juejinThemes)
+        setJuejinThemes(juejinThemesList)
+    }
+
+    // set preContent value
+    const setPreContentValue = (value: any) => {
+        setPreContent(value)
+        storage.setItem('jjDefaultPreContent', value)
+    }
+
+    // set postContent value
+    const setPostContentValue = (value: any) => {
+        setPostContent(value)
+        storage.setItem('jjDefaultPostContent', value)
     }
 
     useEffect(() => {
@@ -145,7 +178,7 @@ function DeltaFlyerPage() {
                         <Select
                             mode="multiple"
                             maxCount={3}
-                            style={{ width: 260 }}
+                            style={{ width: 150 }}
                             value={tag}
                             onChange={setTagValue}
                             options={juejinTags.map((item) => {
@@ -165,6 +198,47 @@ function DeltaFlyerPage() {
                             value={column}
                             onChange={setColumnValue}
                             options={allColumn}
+                        />
+                    </Col>
+                    <Col span={6} className="toolItem">
+                        <span>默认主题：</span>
+                        <Select
+                            style={{ width: 160 }}
+                            value={jjTheme}
+                            onChange={setJuejinThemesValue}
+                            options={juejinThemes.map((item) => {
+                                return {
+                                    value: item.key,
+                                    label: item.is_lottery
+                                        ? item.label + '(奖)'
+                                        : item.label,
+                                }
+                            })}
+                        />
+                    </Col>
+                </Row>
+                {/* 文章前后增加的文字 */}
+                <Row className="toolRow" justify="center" align={'middle'}>
+                    <Col span={24} className="toolItem">
+                        <div style={{ width: 80 }}>前置内容：</div>
+                        <TextArea
+                            rows={3}
+                            placeholder="在文章开头增加的内容"
+                            maxLength={6}
+                            value={preContent}
+                            onChange={setPreContentValue}
+                        />
+                    </Col>
+                </Row>
+                <Row className="toolRow" justify="center" align={'middle'}>
+                    <Col span={24} className="toolItem">
+                        <div style={{ width: 80 }}>后置内容：</div>
+                        <TextArea
+                            rows={3}
+                            placeholder="在文章结尾增加的内容"
+                            maxLength={6}
+                            value={postContent}
+                            onChange={setPostContentValue}
                         />
                     </Col>
                 </Row>

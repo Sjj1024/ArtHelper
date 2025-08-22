@@ -220,6 +220,7 @@ const addArticle = async (articleObj: Article) => {
 
 // listen juejin cookie change and control chrme windows query and close
 chrome.cookies.onChanged.addListener(async (changeInfo) => {
+    console.log('juejin cookie change', changeInfo)
     if (changeInfo.cookie.name === 'juejinDone') {
         console.log('juejin cookie change', changeInfo)
         // close juejin windows
@@ -238,7 +239,22 @@ chrome.cookies.onChanged.addListener(async (changeInfo) => {
         } catch (error) {
             console.log('close juejin win err', error)
         }
+    } else if (changeInfo.cookie.name === 'juejinThemes') {
+        console.log('juejinhemes cookie change', changeInfo)
+        const juejinThemes = changeInfo.cookie.value
+        console.log('juejinThemes---', juejinThemes)
+        // set juejinhemes value to storage
+        storage.setItem('juejinThemes', juejinThemes)
     }
+})
+
+chrome.storage.onChanged.addListener(async (changeInfo) => {
+    console.log('juejin storage change', changeInfo)
+    // if (changeInfo.juejinThemes) {
+    //     console.log('juejinhemes cookie change', changeInfo)
+    //     const juejinhemes = changeInfo.juejinThemes.newValue
+    //     console.log('juejinhemes', juejinhemes)
+    // }
 })
 
 // 过滤响应体

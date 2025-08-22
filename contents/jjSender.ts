@@ -262,7 +262,7 @@ const updateArt = (id, title, content) => {
 
 // find theme lottery
 const findThemeLottery = () => {
-    const themes = localStorage.getItem('themes')
+    const themes = localStorage.getItem('juejinThemes')
     console.log('get juejin themes:', themes)
     const themeList = JSON.parse(themes)
     console.log('get juejin themes list:', themeList)
@@ -326,7 +326,7 @@ const updateArt2 = (id, title, content) => {
         .then(async (res) => {
             let data = await res.json()
             console.log('updateArt response json is', data)
-            updateColumn()
+            // updateColumn()
         })
         .catch((err) => {
             console.log('updateArt juejin article arr:', err)
