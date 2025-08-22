@@ -1,10 +1,4 @@
 import type { PlasmoCSConfig } from 'plasmo'
-import { Storage } from '@plasmohq/storage'
-
-// 本地存储
-const storage = new Storage({
-    area: 'local',
-})
 
 // 可以匹配多个网址
 export const config: PlasmoCSConfig = {
