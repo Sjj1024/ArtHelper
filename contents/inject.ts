@@ -46,10 +46,14 @@ export const config: PlasmoCSConfig = {
                                 }
                             })
                             console.log('1024小神 Fetched themes:', themes)
-                            // localStorage.setItem(
-                            //     'juejinThemes',
-                            //     JSON.stringify(themes)
-                            // )
+                            const lotteryThemes = themes.filter(
+                                (item) => item.is_lottery
+                            )
+                            console.log('1024小神 Fetched lotteryThemes:', lotteryThemes)
+                            localStorage.setItem(
+                                'lotteryThemes',
+                                JSON.stringify(lotteryThemes)
+                            )
                             // update juejin cookie juejinDone send message to close win
                             document.cookie = `juejinThemes=${JSON.stringify(themes)}; path=/; domain=juejin.cn; secure`
                         }

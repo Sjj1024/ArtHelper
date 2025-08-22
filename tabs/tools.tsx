@@ -97,18 +97,26 @@ function DeltaFlyerPage() {
         const juejinThemes: any = await storage.getItem('juejinThemes')
         const juejinThemesList = JSON.parse(juejinThemes)
         setJuejinThemes(juejinThemesList)
+        // 设置前置内容
+        const preContent = await storage.getItem('jjDefaultPreContent')
+        setPreContent(preContent)
+        // 设置后置内容
+        const postContent = await storage.getItem('jjDefaultPostContent')
+        setPostContent(postContent)
     }
 
     // set preContent value
     const setPreContentValue = (value: any) => {
-        setPreContent(value)
-        storage.setItem('jjDefaultPreContent', value)
+        console.log('setPreContentValue-----', value.target.value)
+        setPreContent(value.target.value)
+        storage.setItem('jjDefaultPreContent', value.target.value)
     }
 
     // set postContent value
     const setPostContentValue = (value: any) => {
-        setPostContent(value)
-        storage.setItem('jjDefaultPostContent', value)
+        console.log('setPostContentValue-----', value.target.value)
+        setPostContent(value.target.value)
+        storage.setItem('jjDefaultPostContent', value.target.value)
     }
 
     useEffect(() => {
@@ -160,7 +168,7 @@ function DeltaFlyerPage() {
                 </Row>
                 <Row className="toolRow" justify="center" align={'middle'}>
                     <Col span={6} className="toolItem">
-                        <span>默认分类：</span>
+                        <div style={{ width: 76 }}>默认分类：</div>
                         <Select
                             style={{ width: 120 }}
                             value={category}
@@ -174,7 +182,7 @@ function DeltaFlyerPage() {
                         />
                     </Col>
                     <Col span={6} className="toolItem">
-                        <span>默认标签：</span>
+                        <span style={{ width: 80 }}>默认标签：</span>
                         <Select
                             mode="multiple"
                             maxCount={3}
@@ -190,7 +198,7 @@ function DeltaFlyerPage() {
                         />
                     </Col>
                     <Col span={6} className="toolItem">
-                        <span>默认专栏：</span>
+                        <span style={{ width: 80 }}>默认专栏：</span>
                         <Select
                             mode="multiple"
                             maxCount={1}
@@ -201,7 +209,7 @@ function DeltaFlyerPage() {
                         />
                     </Col>
                     <Col span={6} className="toolItem">
-                        <span>默认主题：</span>
+                        <span style={{ width: 80 }}>默认主题：</span>
                         <Select
                             style={{ width: 160 }}
                             value={jjTheme}
@@ -224,7 +232,6 @@ function DeltaFlyerPage() {
                         <TextArea
                             rows={3}
                             placeholder="在文章开头增加的内容"
-                            maxLength={6}
                             value={preContent}
                             onChange={setPreContentValue}
                         />
@@ -236,7 +243,6 @@ function DeltaFlyerPage() {
                         <TextArea
                             rows={3}
                             placeholder="在文章结尾增加的内容"
-                            maxLength={6}
                             value={postContent}
                             onChange={setPostContentValue}
                         />

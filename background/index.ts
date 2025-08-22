@@ -47,7 +47,12 @@ const csdnHandle = async (details: any) => {
             const juejinTag: string[] = await storage.getItem('juejinTag')
             const juejinColumn: string[] = await storage.getItem('juejinColumn')
             // del img height
-            const content = replaceImgHeight(postData.content)
+            let content = replaceImgHeight(postData.content)
+            // get preContent and postContent
+            const preContent = await storage.getItem('jjDefaultPreContent')
+            const postContent = await storage.getItem('jjDefaultPostContent')
+            // add preContent and postContent to content
+            content = preContent + content + postContent
             const articlePost = {
                 id: postData.articleId as string,
                 title: postData.title as string,

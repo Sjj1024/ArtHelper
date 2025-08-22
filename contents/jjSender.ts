@@ -262,18 +262,20 @@ const updateArt = (id, title, content) => {
 
 // find theme lottery
 const findThemeLottery = () => {
-    const themes = localStorage.getItem('juejinThemes')
-    console.log('get juejin themes:', themes)
-    const themeList = JSON.parse(themes)
-    console.log('get juejin themes list:', themeList)
-    // find theme lottery
-    const themeLottery = themeList.find((theme) => theme.is_lottery === true)
-    console.log('get juejin theme lottery:', themeLottery)
-    return [themeLottery.theme_id]
+    const lotteryThemes = localStorage.getItem('lotteryThemes')
+    console.log('get juejin lotteryThemes:', lotteryThemes)
+    const lotteryThemesList = JSON.parse(lotteryThemes)
+    console.log('get juejin lotteryThemesList:', lotteryThemesList)
+    if (lotteryThemesList.length > 0) {
+        return lotteryThemesList.map((item) => item.value)
+    }
+    return []
 }
 
 //send fetch update juejin article
 const updateArt2 = (id, title, content) => {
+    const themeLottery = findThemeLottery()
+    console.log('get updateArt2 themeLottery:', themeLottery)
     const link_url = ''
     const is_gfw = 0
     const is_english = 0
@@ -281,7 +283,7 @@ const updateArt2 = (id, title, content) => {
     const edit_type = 10
     const html_content = 'deprecated'
     const mark_content = content
-    const theme_ids = findThemeLottery()
+    const theme_ids = themeLottery
     const postJson = {
         id,
         category_id: category,
@@ -326,7 +328,7 @@ const updateArt2 = (id, title, content) => {
         .then(async (res) => {
             let data = await res.json()
             console.log('updateArt response json is', data)
-            // updateColumn()
+            updateColumn()
         })
         .catch((err) => {
             console.log('updateArt juejin article arr:', err)
@@ -368,11 +370,13 @@ const getArtDesc = () => {
 
 // publish article to update columns
 const updateColumn = () => {
+    const themeLottery = findThemeLottery()
+    console.log('get updateColumn themeLottery:', themeLottery)
     const postJson = {
         draft_id: tid,
         sync_to_org: false,
         column_ids: columns,
-        theme_ids: [],
+        theme_ids: themeLottery,
     }
     console.log('update column post json', postJson)
     fetch(
